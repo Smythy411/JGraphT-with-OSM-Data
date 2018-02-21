@@ -1,11 +1,17 @@
+/*OSMWay is a custom class for interacting with OSM ways.
+ */
+
 import java.util.ArrayList;
 
-import org.jgrapht.graph.DefaultEdge;
 public class OSMWay {
 	
 	private int id;
 	private long wayID;
 	private ArrayList<OSMNode> nodes;
+	
+	/*
+	 * 		CONSTRUCTORS
+	 */
 	
 	public OSMWay(int passedId, long passedWayID) {
 		this.id = passedId;
@@ -17,6 +23,10 @@ public class OSMWay {
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
 	}//End OSMEdge Constructor
+	
+	/*
+	 * 		METHODS
+	 */
 	
 	public long getWayID() {
 		return this.wayID;

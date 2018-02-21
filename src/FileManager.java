@@ -1,29 +1,25 @@
+/*FileManger handles all file parsing and interacts with a DBManager 
+ * to insert data into database.
+ * The .csv and .osm file were generated using the osmconvert command line tool.
+ * .osm has an XML structure.
+ */
+
 import com.opencsv.CSVReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
 
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import java.net.URL;
-import java.nio.file.Files;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
-
-
-/**
- * Created by Eoin on 04/12/2017.
- */
 
 public class FileManager {
     private String csvFile;
@@ -40,6 +36,7 @@ public class FileManager {
         db = new DBManager("GraphTesting");
     }//End FileHandler constructor
 
+    //Parses data from CSVFile (Nodes)
     public void openCSVFile() {
         try {
         	Reader r = Files.newBufferedReader(Paths.get(csvFile));
@@ -61,9 +58,10 @@ public class FileManager {
         for (int i = 1; i < list.size(); i++) {
             System.out.println("Inserting node " + list.get(i)[0]);
             db.insert("nodelist", new String[] {Integer.toString(i), list.get(i)[0], list.get(i)[1], list.get(i)[2]});
-        }
-    }//end openCSVFile
+        }//end for
+    }//End openCSVFile
 
+    //Parses data from .osm file (Ways and Edges)
     public void parseXml(){
     	try {
 	        File inputFile = new File(osmFile);
@@ -88,7 +86,7 @@ public class FileManager {
 		        			String nodeRef =  nodes.get(i).valueOf("@ref");
 		        			if (n == 0) {
 		        				sourceNode = nodeRef;	
-		        			}
+		        			}//End if
 		        			//System.out.println(nodes.get(i).getName() + ": " + nodeRef);
 		        			if (db.selectNode("nodeID", nodeRef)) {
 			        			db.insert("waylist", new String[] {Integer.toString(j), way.valueOf("@id"), nodeRef});

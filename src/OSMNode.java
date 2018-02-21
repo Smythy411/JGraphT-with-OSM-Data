@@ -1,10 +1,15 @@
-
+/*OSMNode is a custom vertex class for working with OSM data
+ */
 public class OSMNode {
 	
 	private int id;
 	private long nodeID;
 	private String lat;
 	private String lon;
+	
+	/*
+	 * 		CONSTRUCTORS
+	 */
 	
 	public OSMNode() {
 		
@@ -30,6 +35,10 @@ public class OSMNode {
 		this.lat = passedLat;
 		this.lon = passedLon;
 	}//End OSMNode Constructor
+	
+	/*
+	 * 		METHODS
+	 */
 	
 	public void setNodeID(long passedNodeID) {
 		this.nodeID = passedNodeID;
@@ -59,5 +68,5 @@ public class OSMNode {
     public String toString()
     {
         return "(" + this.nodeID + ")";
-    }
+    }//End toString
 }//End OSMNode

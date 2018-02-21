@@ -1,5 +1,7 @@
+/*Created by: Eoin Smyth
+ * Created for the purpose of testing the JGraphtT library with OSM data for 4th year project
+ */
 import java.util.ArrayList;
-import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
@@ -21,7 +23,7 @@ public class Main {
 		System.out.println(stringGraph.toString());
 		
 		//Checking if Graph is cyclical
-		CycleDetector cd = new CycleDetector(stringGraph);
+		CycleDetector<String, DefaultEdge> cd = new CycleDetector<String, DefaultEdge>(stringGraph);
 		System.out.println(cd.detectCycles());
 		
 		DBManager db = new DBManager("GraphTesting");

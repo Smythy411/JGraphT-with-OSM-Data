@@ -1,3 +1,6 @@
+/*DBManager handles all interactions with the postgres database
+ */
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -28,8 +31,12 @@ public class DBManager {
 	    }//End try catch
 		return c;
    }//End connect
+	
+	/*
+	 * 		CREATES
+	 */
    
-   //Create a table in database connection
+   //Create a table 'Nodelist' in database connection
    public void createNodeTable() {
 	   try {
 		   Statement stmt = c.createStatement();
@@ -49,7 +56,7 @@ public class DBManager {
 	   }//End try catch
    }//End createNodeTable
    
-   //Create a table in database connection
+   //Create a table Waylist in database connection
    public void createWayTable() {
 	   try {
 		   Statement stmt = c.createStatement();
@@ -69,6 +76,7 @@ public class DBManager {
 	   }//End try catch
    }//End createNodeTable
    
+ //Create a table Edgelist in database connection
    public void createEdgeTable() {
 	   try {
 		   Statement stmt = c.createStatement();
@@ -89,11 +97,17 @@ public class DBManager {
 	   }//End try catch
    }//End createNodeTable
    
+   /*
+    * 		INSERTS
+    */
+   
    //Insert values into Table
    public void insert(String table, String[] values) {
 	   try {
 		   Statement stmt = c.createStatement();
 		   String sql = "";
+		   
+		   //Checks which table to insert into
 		   if (table == "nodelist") {
 			   sql = "INSERT INTO NODELIST (ID, nodeId, lat, lon)" +
 		   "VALUES(" + values[0] + ", '" + values[1] + "', " + values[2] + 
@@ -120,6 +134,11 @@ public class DBManager {
 	   }//End try catch
    }//End insert
    
+   /*
+    * 		SELECTS
+    */
+   
+   //Gets the relevant node by 'id'
    public OSMNode getNodeById(int id) {
 	   OSMNode node = new OSMNode(id);
 	   try {
@@ -139,6 +158,7 @@ public class DBManager {
 	   return node;
    }//End getNodeByID
    
+ //Gets the relevant node by 'nodeID'
    public OSMNode getNodeByNodeId(long nodeID) {
 	   OSMNode node = new OSMNode(nodeID);
 	   try {
@@ -157,6 +177,7 @@ public class DBManager {
 	   return node;
    }//End getNodeByID
    
+ //Gets the relevant nodes by 'wayID'
    public ArrayList<OSMNode> getNodesbyWayId(long wayID) {
 	   ArrayList<OSMNode> nodes = new ArrayList<>();
 	   try {
@@ -174,8 +195,9 @@ public class DBManager {
 	   }//End try catch
 	   
 	   return nodes;
-   }
+   }//End getNodesByWayId
    
+   //Gets all edges from database
    public ArrayList<OSMEdge> getEdges() {
 	   ArrayList<OSMEdge> edges = new ArrayList<>();
 	   
@@ -195,8 +217,9 @@ public class DBManager {
 		   System.exit(0);
 	   }//End try catch
 	   return edges;
-   }
+   }//End getEdges
    
+   //Gets the wayID for a relevant Edge.
    public long getWayIdByEdge(long source, long target) {
 	   long wayID = 0;
 	   try {
@@ -213,9 +236,9 @@ public class DBManager {
 		   System.exit(0);
 	   }//End try catch
 	   return wayID;
-   }
+   }//End getWayIdByEdge
    
-   //Select rows from table
+   //Select * rows from table nodelist (for testing)
    public boolean selectNode(String param, String value) {
 	   boolean found = false;
 	   try {
@@ -262,6 +285,10 @@ public class DBManager {
 	   return found;
    }//End select
    
+   /*
+    * 		UPDATES
+    */
+   
    //Update row in table
    public void update(String table, String col, String value, String indCol, String index) {
 	   try {
@@ -278,6 +305,10 @@ public class DBManager {
 		   System.exit(0);
 	   }//End try catch
    }//End update
+   
+   /*
+    * 		DELETES
+    */
    
    //Delete row from table
    public void delete(String table, String col, String value) {
@@ -304,6 +335,6 @@ public class DBManager {
 		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
 		   System.exit(0);
 	   }//End try catch
-   }
+   }//End close()
    
 }//End DBManager
