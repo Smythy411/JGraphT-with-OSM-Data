@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/opencsv-4.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/postgresql-42.2.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jgrapht-1.1.0/jgrapht-1.1.0/lib/jgrapht-core-1.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jxmapviewer2-2.3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/commons-logging-1.1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

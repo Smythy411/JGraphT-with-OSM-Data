@@ -2,6 +2,7 @@
  * Created for the purpose of testing the JGraphtT library with OSM data for 4th year project
  */
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
@@ -15,7 +16,7 @@ public class Main {
 		
 		//databaseSetUp();
 		//dataSetUp();
-		
+        
 		GraphTesting gt = new GraphTesting();
 		
 		//Simple String Graph
@@ -54,6 +55,9 @@ public class Main {
 		
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		System.out.println(edgeGraph);
+		
+		Set<OSMNode> set = edgeGraph.vertexSet();
+		MapViewer mv = new MapViewer(set);
 
 		//Closing Database
 		db.close();
