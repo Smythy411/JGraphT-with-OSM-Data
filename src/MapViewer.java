@@ -30,8 +30,6 @@ public class MapViewer {
 		displayViewer();
 		tileSetUp();
 	    
-	    GeoPosition base = new GeoPosition(53.2795432, -6.3469185);
-	    
 	    ArrayList<GeoPosition>  geopoints= new ArrayList<>();
 	    Set<Waypoint> waypoints = new HashSet<Waypoint>();
 	    
@@ -39,21 +37,51 @@ public class MapViewer {
 	    Set<OSMEdge> edges = graph.edgeSet();
 	    Object[] temp = nodes.toArray();
 	    OSMEdge[] e = edges.toArray(new OSMEdge[edges.size()]);
-	    System.out.println(e[1].getSourceNode());
-	    for (int i = 0; i < 5; i++) {
-	    	OSMNode source = e[i].getSourceNode();
-	    	OSMNode target = e[i].getTargetNode();
+
+	    //Inital Edge
+	    OSMNode source = e[0].getSourceNode();
+    	OSMNode target = e[0].getTargetNode();
+    	
+    	GeoPosition sourceGeoP = new GeoPosition(Double.parseDouble(source.getLat()), Double.parseDouble((source.getLon())));
+    	geopoints.add(sourceGeoP);
+    	waypoints.add(new DefaultWaypoint(sourceGeoP));
+    	
+    	GeoPosition targetGeoP = new GeoPosition(Double.parseDouble(target.getLat()), Double.parseDouble((target.getLon())));
+    	geopoints.add(targetGeoP);
+    	waypoints.add(new DefaultWaypoint(targetGeoP));
+    	
+	    for (int i = 0; i < 10; i++) {	    			
+	    	boolean targetNotFound = true;
+	    	int j = 0;
 	    	
-	    	geopoints.add(new GeoPosition(Double.parseDouble(source.getLat()), Double.parseDouble((source.getLon()))));
-	    	waypoints.add(new DefaultWaypoint(geopoints.get(i)));
+	    	OSMEdge savedEdge = new OSMEdge();
+	    	while(targetNotFound) {
+	    		 if (target.getNodeID() == e[j].getSourceNode().getNodeID()) {
+	    			 targetNotFound = false;
+	    			 System.out.println(target.getNodeID() + " : " + e[j].getSourceNode().getNodeID() + " : "  + targetNotFound);
+	    			 source = e[j].getSourceNode();
+	    			 target = e[j].getTargetNode();
+	    			 
+	    			 GeoPosition geoP = new GeoPosition(Double.parseDouble(target.getLat()), Double.parseDouble((target.getLon())));
+	    			 geopoints.add(geoP);
+	    			 
+	    			 waypoints.add(new DefaultWaypoint(geoP));
+	    			 
+	    			 savedEdge = e[j];
+	    		 }
+	    		j++;
+	    		if (j == e.length){
+	    			targetNotFound = false;
+	    		}
+	    	}
 	    }
 	    
 	    List<GeoPosition> track = geopoints;
 	    
 	    drawRoute(waypoints, track);
 	    
-        mapViewer.setZoom(5);
-        mapViewer.setAddressLocation(base);
+        mapViewer.setZoom(4);
+        mapViewer.setAddressLocation(geopoints.get(0));
 	}
 	
 	public void displayViewer() {
