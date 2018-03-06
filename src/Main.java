@@ -55,9 +55,8 @@ public class Main {
 		
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		System.out.println(edgeGraph);
-		
-		Set<OSMNode> set = edgeGraph.vertexSet();
-		MapViewer mv = new MapViewer(set);
+
+		MapViewer mv = new MapViewer(edgeGraph);
 
 		//Closing Database
 		db.close();
