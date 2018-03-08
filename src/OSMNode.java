@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /*OSMNode is a custom vertex class for working with OSM data
  */
 public class OSMNode {
@@ -6,6 +8,8 @@ public class OSMNode {
 	private long nodeID;
 	private String lat;
 	private String lon;
+	
+	ArrayList<OSMEdge> edges = new ArrayList<OSMEdge>();
 	
 	/*
 	 * 		CONSTRUCTORS
@@ -63,6 +67,14 @@ public class OSMNode {
 	public String getLon() {
 		return this.lon;
 	}//End getNodeID
+	
+	public void addEdge(OSMEdge e) {
+		this.edges.add(e);
+	}
+	
+	public ArrayList<OSMEdge> getEdges() {
+		return this.edges;
+	}
 	
     @Override
     public String toString()

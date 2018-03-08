@@ -197,18 +197,54 @@ public class DBManager {
 	   return nodes;
    }//End getNodesByWayId
    
+   public ArrayList<OSMNode> getNodes() {
+	   ArrayList<OSMNode> nodes = new ArrayList<>();
+	   
+	   try {
+		  Statement stmt = c.createStatement();
+		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist;");
+		  while(rs.next()) {
+			  OSMNode node = new OSMNode(rs.getLong("nodeID"), rs.getString("lat"), rs.getString("lon"));
+			  nodes.add(node);
+		  }//End while
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return nodes;
+   }
+   
    //Gets all edges from database
-   public ArrayList<OSMEdge> getEdges() {
+   public ArrayList<OSMEdge> getEdges(ArrayList<OSMNode> nodes) {
 	   ArrayList<OSMEdge> edges = new ArrayList<>();
 	   
 	   try {
 		   Statement stmt = c.createStatement();
 		   ResultSet rs = stmt.executeQuery("SELECT * FROM edgelist;");
 		   while(rs.next()) {
-			   OSMNode sourceNode = getNodeByNodeId(rs.getLong("sourceNode"));
-			   OSMNode targetNode = getNodeByNodeId(rs.getLong("targetNode"));
-			   OSMEdge edge = new OSMEdge(rs.getLong("wayID"), sourceNode, targetNode);
-			   edges.add(edge);
+
+			   OSMNode sourceNode = null, targetNode = null;
+			   for (int i = 0; i < nodes.size(); i++) {
+				   OSMNode node = nodes.get(i);
+				   if (node.getNodeID() == rs.getLong("targetNode")) {
+					   targetNode = node;
+				   }
+				   if (node.getNodeID() == rs.getLong("sourceNode") ) {
+					   sourceNode = node; 
+				   }
+			   }
+			   
+			   if (sourceNode == targetNode) {
+				  // System.out.println("Loops not allowed");
+			   } else {			   
+				   //System.out.println(rs.getLong("wayID") + " : " + sourceNode + " : " + targetNode);
+				   OSMEdge edge = new OSMEdge(rs.getLong("wayID"), sourceNode, targetNode);
+				   sourceNode.addEdge(edge);
+				   targetNode.addEdge(edge);
+				   edges.add(edge);
+			   }
 		   }//End while
 		   rs.close();
 		   stmt.close();

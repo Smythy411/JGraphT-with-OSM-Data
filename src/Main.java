@@ -21,7 +21,7 @@ public class Main {
 		
 		//Simple String Graph
 		DefaultDirectedGraph<String, DefaultEdge> stringGraph = gt.createStringGraph(new String[] {"v1", "v2", "v3", "v4", "v5"});
-		System.out.println(stringGraph.toString());
+		//System.out.println(stringGraph.toString());
 		
 		//Checking if Graph is cyclical
 		CycleDetector<String, DefaultEdge> cd = new CycleDetector<String, DefaultEdge>(stringGraph);
@@ -34,27 +34,27 @@ public class Main {
 		for (int i = 1; i <= 5; i++) {
 			OSMNode node = db.getNodeById(i);
 			nodes.add(node);
-			System.out.println(nodes.get(i - 1).getNodeID() + " / " + nodes.get(i - 1).getLat() + " / " + nodes.get(i - 1).getLon());
+			//System.out.println(nodes.get(i - 1).getNodeID() + " / " + nodes.get(i - 1).getLat() + " / " + nodes.get(i - 1).getLon());
 		}//End for
 		
 		Graph<OSMNode, DefaultEdge> nodeGraph = gt.createNodeGraph(nodes);
-		System.out.println(nodeGraph);
+		//System.out.println(nodeGraph);
 		
 		//Creating a Graph with OSM Nodes grabbed using WayID
 		ArrayList<OSMNode> nodes2 = db.getNodesbyWayId(4258427);
 		for (int i = 0; i < nodes.size(); i++) {
-			System.out.println(nodes.get(i).getNodeID() + " / " + nodes.get(i).getLat() + " / " + nodes.get(i).getLon());
+			//System.out.println(nodes.get(i).getNodeID() + " / " + nodes.get(i).getLat() + " / " + nodes.get(i).getLon());
 		}//End for
 		
 		Graph<OSMNode, DefaultEdge> nodeGraph2 = gt.createNodeGraph(nodes2);
-		System.out.println(nodeGraph2);
+		//System.out.println(nodeGraph2);
 
 		//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
-		
-		ArrayList<OSMEdge> edges = db.getEdges();
+		ArrayList<OSMNode> nodeList = db.getNodes();
+		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
 		
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
-		System.out.println(edgeGraph);
+		//System.out.println(edgeGraph);
 
 		MapViewer mv = new MapViewer(edgeGraph);
 

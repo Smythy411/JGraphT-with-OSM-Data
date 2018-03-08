@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.swing.JFrame;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.SimpleGraph;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
 import org.jxmapviewer.painter.CompoundPainter;
@@ -22,66 +23,93 @@ public class MapViewer {
 	
 	JXMapViewer mapViewer = new JXMapViewer();
 	Graph<OSMNode, OSMEdge> graph;
+	ArrayList<GeoPosition>  geopoints= new ArrayList<>();
+    Set<Waypoint> waypoints = new HashSet<Waypoint>();
+    
+    boolean finished= false;
 	
-	public MapViewer(Graph g) {
+	public MapViewer(Graph<OSMNode, OSMEdge> g) {
 		
 		this.graph = g;
 		
 		displayViewer();
 		tileSetUp();
 	    
-	    ArrayList<GeoPosition>  geopoints= new ArrayList<>();
-	    Set<Waypoint> waypoints = new HashSet<Waypoint>();
-	    
 	    Set<OSMNode> nodes = graph.vertexSet();
 	    Set<OSMEdge> edges = graph.edgeSet();
 	    Object[] temp = nodes.toArray();
 	    OSMEdge[] e = edges.toArray(new OSMEdge[edges.size()]);
+	    
+	    Graph<OSMNode, OSMEdge> subGraph = new SimpleGraph<OSMNode, OSMEdge>(OSMEdge.class);
 
 	    //Inital Edge
 	    OSMNode source = e[0].getSourceNode();
     	OSMNode target = e[0].getTargetNode();
     	
-    	GeoPosition sourceGeoP = new GeoPosition(Double.parseDouble(source.getLat()), Double.parseDouble((source.getLon())));
-    	geopoints.add(sourceGeoP);
-    	waypoints.add(new DefaultWaypoint(sourceGeoP));
+    	subGraph.addVertex(source);
+    	subGraph.addVertex(target);
+    	subGraph.addEdge(source, target);
     	
-    	GeoPosition targetGeoP = new GeoPosition(Double.parseDouble(target.getLat()), Double.parseDouble((target.getLon())));
-    	geopoints.add(targetGeoP);
-    	waypoints.add(new DefaultWaypoint(targetGeoP));
+    	addToPainter(source);
+    	addToPainter(target);
     	
-	    for (int i = 0; i < 10; i++) {	    			
-	    	boolean targetNotFound = true;
-	    	int j = 0;
-	    	
-	    	OSMEdge savedEdge = new OSMEdge();
-	    	while(targetNotFound) {
-	    		 if (target.getNodeID() == e[j].getSourceNode().getNodeID()) {
-	    			 targetNotFound = false;
-	    			 System.out.println(target.getNodeID() + " : " + e[j].getSourceNode().getNodeID() + " : "  + targetNotFound);
-	    			 source = e[j].getSourceNode();
-	    			 target = e[j].getTargetNode();
-	    			 
-	    			 GeoPosition geoP = new GeoPosition(Double.parseDouble(target.getLat()), Double.parseDouble((target.getLon())));
-	    			 geopoints.add(geoP);
-	    			 
-	    			 waypoints.add(new DefaultWaypoint(geoP));
-	    			 
-	    			 savedEdge = e[j];
-	    		 }
-	    		j++;
-	    		if (j == e.length){
-	    			targetNotFound = false;
-	    		}
-	    	}
-	    }
-	    
+
+    	
+    	int size = 40;
+    	constructG(size, source, target);
+    	
 	    List<GeoPosition> track = geopoints;
 	    
 	    drawRoute(waypoints, track);
 	    
-        mapViewer.setZoom(4);
+        mapViewer.setZoom(5);
         mapViewer.setAddressLocation(geopoints.get(0));
+	}
+	
+	public void constructG(int size, OSMNode source, OSMNode target) {
+		System.out.println(size);
+		
+		ArrayList<OSMEdge> edges = target.getEdges();
+		
+		if (size == 0) {
+			finished = true;
+		}
+		
+		if (edges.size() == 1) {
+			//System.out.println("Dead End");
+			target = edges.get(0).getTargetNode();
+			addToPainter(target);
+			
+			return;
+		} else {
+			for (int i = 0; i < edges.size(); i++) {
+				if (finished) {
+					return;
+				}
+				
+				target = edges.get(i).getTargetNode();
+				
+				addToPainter(target);
+				
+				if (edges.equals(target.getEdges())) {
+					//System.out.println("Edge Already visited");
+				} else {
+					ArrayList<OSMEdge> subEdges = target.getEdges();
+					//System.out.println(subEdges);
+					for (int j = 0; j < subEdges.size(); j++) {
+						constructG(size--, target, subEdges.get(j).getTargetNode());
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public void addToPainter(OSMNode node) {
+		GeoPosition geoP = new GeoPosition(Double.parseDouble(node.getLat()), Double.parseDouble((node.getLon())));
+		geopoints.add(geoP);
+		 
+		waypoints.add(new DefaultWaypoint(geoP));
 	}
 	
 	public void displayViewer() {
