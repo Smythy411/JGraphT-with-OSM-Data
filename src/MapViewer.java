@@ -26,6 +26,8 @@ public class MapViewer {
 	ArrayList<GeoPosition>  geopoints= new ArrayList<>();
     Set<Waypoint> waypoints = new HashSet<Waypoint>();
     
+    ArrayList<OSMEdge> full = new ArrayList<>();
+    
     boolean finished= false;
 	
 	public MapViewer(Graph<OSMNode, OSMEdge> g) {
@@ -53,10 +55,11 @@ public class MapViewer {
     	addToPainter(source);
     	addToPainter(target);
     	
-
+    	//ArrayList<OSMEdge> full = new ArrayList<>();
+    	constructG(41, source, target);
+    	System.out.println(full.size());
     	
-    	int size = 40;
-    	constructG(size, source, target);
+    	addToPainter(source);
     	
 	    List<GeoPosition> track = geopoints;
 	    
@@ -67,11 +70,10 @@ public class MapViewer {
 	}
 	
 	public void constructG(int size, OSMNode source, OSMNode target) {
-		System.out.println(size);
 		
 		ArrayList<OSMEdge> edges = target.getEdges();
 		
-		if (size == 0) {
+		if (size <= 0) {
 			finished = true;
 		}
 		
@@ -97,7 +99,13 @@ public class MapViewer {
 					ArrayList<OSMEdge> subEdges = target.getEdges();
 					//System.out.println(subEdges);
 					for (int j = 0; j < subEdges.size(); j++) {
-						constructG(size--, target, subEdges.get(j).getTargetNode());
+						if (full.contains(subEdges.get(j))) {
+							
+						} else {
+							full.add((subEdges.get(j)));
+							System.out.println(full);
+							constructG(size--, target, subEdges.get(j).getTargetNode());
+						}
 					}
 				}
 			}
