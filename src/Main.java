@@ -1,12 +1,21 @@
 /*Created by: Eoin Smyth
  * Created for the purpose of testing the JGraphtT library with OSM data for 4th year project
  */
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.*;
+import org.jgrapht.io.CSVExporter;
+import org.jgrapht.io.CSVFormat;
+import org.jgrapht.io.ComponentNameProvider;
+import org.jgrapht.io.IntegerComponentNameProvider;
+import org.jgrapht.io.StringComponentNameProvider;
 
 public class Main {
 
@@ -57,6 +66,14 @@ public class Main {
 		//System.out.println(edgeGraph);
 
 		MapViewer mv = new MapViewer(edgeGraph);
+		
+		//Exporting Graph
+		try {
+			exportGraph(edgeGraph);
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//End try catch
 
 		//Closing Database
 		db.close();
@@ -84,5 +101,18 @@ public class Main {
 		fm.openCSVFile();
 		fm.parseXml();
 	}//End dataSetUp()
+	
+	//Exporting Graph to CSV File as an Adjacency List. Could be useful for transport.
+	//Importing Graph from CSV files is also supported
+	public static void exportGraph(Graph g) throws FileNotFoundException, UnsupportedEncodingException {
+		ComponentNameProvider<OSMNode> nodeName = new StringComponentNameProvider();
+		ComponentNameProvider<OSMEdge> edgeName = new StringComponentNameProvider();
+		
+		CSVExporter cE = new CSVExporter(nodeName, CSVFormat.ADJACENCY_LIST, ',');
+		cE.setEdgeIDProvider(edgeName);
+		
+		PrintWriter writer = new PrintWriter("resources/graph.csv", "UTF-8");
+		cE.exportGraph(g, writer);
+	}//End exportGraph
 
 }//End Main

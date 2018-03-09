@@ -67,15 +67,17 @@ public class MapViewer {
 	    
         mapViewer.setZoom(5);
         mapViewer.setAddressLocation(geopoints.get(0));
-	}
+	}//End Constructor
 	
+	//Constructs the graph recursively
 	public void constructG(int size, OSMNode source, OSMNode target) {
 		
 		ArrayList<OSMEdge> edges = target.getEdges();
 		
+		//Base Case
 		if (size <= 0) {
 			finished = true;
-		}
+		}//End if
 		
 		if (edges.size() == 1) {
 			//System.out.println("Dead End");
@@ -87,7 +89,7 @@ public class MapViewer {
 			for (int i = 0; i < edges.size(); i++) {
 				if (finished) {
 					return;
-				}
+				}//NEd if
 				
 				target = edges.get(i).getTargetNode();
 				
@@ -105,20 +107,21 @@ public class MapViewer {
 							full.add((subEdges.get(j)));
 							System.out.println(full);
 							constructG(size--, target, subEdges.get(j).getTargetNode());
-						}
-					}
-				}
-			}
-		}
+						}//End if else
+					}//End for
+				}//End if else
+			}//End for
+		}//End if else
 		
-	}
+	}//End constructG
 	
+	//Adds a node to the relevant painters
 	public void addToPainter(OSMNode node) {
 		GeoPosition geoP = new GeoPosition(Double.parseDouble(node.getLat()), Double.parseDouble((node.getLon())));
 		geopoints.add(geoP);
 		 
 		waypoints.add(new DefaultWaypoint(geoP));
-	}
+	}//End AddToPainter
 	
 	public void displayViewer() {
 	    // Display the viewer in a JFrame
@@ -137,6 +140,7 @@ public class MapViewer {
 	    mapViewer.setTileFactory(tileFactory);
 	}//End tileSetUp()
 	
+	//Takes in a nodes and edges, creates painters and draws them on the map
 	public void drawRoute(Set<Waypoint> waypoints, List<GeoPosition> track) {
 		RoutePainter routePainter = new RoutePainter(track);
 		
@@ -149,6 +153,6 @@ public class MapViewer {
 
         CompoundPainter<JXMapViewer> painter = new CompoundPainter<JXMapViewer>(painters);
         mapViewer.setOverlayPainter(painter);
-	}
+	}//End drawRoute
 
-}
+}//End MapViewer
