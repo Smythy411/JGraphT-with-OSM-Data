@@ -29,7 +29,7 @@ public class GraphTesting {
 		return g;
 	}//End createNodeGraph
 	
-	//Creates a cyclical Graph with OSMNode edges and DefaultEdge edges
+	//Creates a cyclical Graph with OSMNode nodes and DefaultEdge edges
 	public Graph<OSMNode, DefaultEdge> createNodeGraph(ArrayList<OSMNode> vertices) {
 		
 		Graph<OSMNode, DefaultEdge> g = new SimpleGraph<OSMNode, DefaultEdge>(DefaultEdge.class);

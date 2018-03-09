@@ -9,6 +9,7 @@ public class OSMEdge extends DefaultEdge{
 	private static final long serialVersionUID = 1L;
 	
 	private String label;
+	private long edgeID;
 	private long wayID;
 	OSMNode sourceNode, targetNode;
 	
@@ -22,7 +23,12 @@ public class OSMEdge extends DefaultEdge{
 	
 	public OSMEdge(long wID) {
 		this.wayID = wID;
-		this.label = Long.toString(wID);
+	}//End constructor
+	
+	public OSMEdge(long eID, long wID) {
+		this.edgeID = eID;
+		this.wayID = wID;
+		this.label = Long.toString(eID);
 	}//End constructor
 	
 	public OSMEdge(OSMNode source, OSMNode target) {
@@ -38,7 +44,14 @@ public class OSMEdge extends DefaultEdge{
 	
 	public OSMEdge(long wID, OSMNode source, OSMNode target) {
 		this.wayID = wID;
-		this.label = Long.toString(wID);
+		this.sourceNode = source;
+		this.targetNode = target;
+	}//End constructor
+	
+	public OSMEdge(long eID, long wID, OSMNode source, OSMNode target) {
+		this.edgeID = eID;
+		this.wayID = wID;
+		this.label = Long.toString(eID);
 		this.sourceNode = source;
 		this.targetNode = target;
 	}//End constructor
@@ -46,6 +59,14 @@ public class OSMEdge extends DefaultEdge{
 	/*
 	 * 		METHODS
 	 */
+	
+	public long getEdgeID() {
+		return this.edgeID;
+	}//End getWayID()
+	
+	public void setEdgeID(long eID) {
+		this.edgeID = eID;
+	}//End setWayID()
 	
 	public long getWayID() {
 		return this.wayID;

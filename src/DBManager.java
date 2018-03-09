@@ -81,9 +81,11 @@ public class DBManager {
 	   try {
 		   Statement stmt = c.createStatement();
 		   String sql = "CREATE TABLE EDGELIST " +
-		      "(wayID BIGINT PRIMARY KEY NOT NULL," +
+		      "(edgeID BIGINT PRIMARY KEY NOT NULL," +
+		      " wayID BIGINT NOTNULL, " +
 		      " sourceNode BIGINT NOT NULL," +
 		      " targetNode BIGINT NOT NULL," +
+		      " foreign key (wayID) references WayList(wayId), " +
 		      " foreign key (sourceNode) references NodeList(nodeID), " +
 		      " foreign key (targetNode) references NodeList(nodeID));";
 		   System.out.println(sql);
@@ -116,8 +118,8 @@ public class DBManager {
 			   sql = "INSERT INTO WAYLIST (ID, wayID, node)" +
 					   "VALUES(" + values[0] + ", " + values[1] + ", " + values[2] + ");";
 		   } else if (table == "edgelist") {
-			   sql = "INSERT INTO EDGELIST (wayID, sourceNode, targetNode)" +
-					   "VALUES(" + values[0] + ", " + values[1] + ", " + values[2] + ");";
+			   sql = "INSERT INTO EDGELIST (edgeId, wayID, sourceNode, targetNode)" +
+					   "VALUES(" + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3]  +");";
 			   System.out.println(sql);
 		   }else {
 			   System.out.println("Invalid table name");
@@ -136,6 +138,10 @@ public class DBManager {
    
    /*
     * 		SELECTS
+    */
+   
+   /*
+    * 		NodeList
     */
    
    //Gets the relevant node by 'id'
@@ -177,6 +183,29 @@ public class DBManager {
 	   return node;
    }//End getNodeByID
    
+   public ArrayList<OSMNode> getNodes() {
+	   ArrayList<OSMNode> nodes = new ArrayList<>();
+	   
+	   try {
+		  Statement stmt = c.createStatement();
+		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist;");
+		  while(rs.next()) {
+			  OSMNode node = new OSMNode(rs.getLong("nodeID"), rs.getString("lat"), rs.getString("lon"));
+			  nodes.add(node);
+		  }//End while
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return nodes;
+   }//End getNodes
+   
+   /*
+    * 		WayList
+    */
+   
  //Gets the relevant nodes by 'wayID'
    public ArrayList<OSMNode> getNodesbyWayId(long wayID) {
 	   ArrayList<OSMNode> nodes = new ArrayList<>();
@@ -197,24 +226,9 @@ public class DBManager {
 	   return nodes;
    }//End getNodesByWayId
    
-   public ArrayList<OSMNode> getNodes() {
-	   ArrayList<OSMNode> nodes = new ArrayList<>();
-	   
-	   try {
-		  Statement stmt = c.createStatement();
-		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist;");
-		  while(rs.next()) {
-			  OSMNode node = new OSMNode(rs.getLong("nodeID"), rs.getString("lat"), rs.getString("lon"));
-			  nodes.add(node);
-		  }//End while
-		   rs.close();
-		   stmt.close();
-	   }catch ( Exception e ) {
-		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
-		   System.exit(0);
-	   }//End try catch
-	   return nodes;
-   }
+   /*
+    * 		EdgeList
+    */
    
    //Gets all edges from database
    public ArrayList<OSMEdge> getEdges(ArrayList<OSMNode> nodes) {
@@ -239,7 +253,10 @@ public class DBManager {
 			   if (sourceNode == targetNode) {
 				  // System.out.println("Loops not allowed");
 			   } else {			   
-				   //System.out.println(rs.getLong("wayID") + " : " + sourceNode + " : " + targetNode);
+				   /*
+				    * 		REPLACE WHEN DB IS UPDATED
+				   OSMEdge edge = new OSMEdge(rs.getLong("edgeID"), rs.getLong("wayID"), sourceNode, targetNode);
+				   */
 				   OSMEdge edge = new OSMEdge(rs.getLong("wayID"), sourceNode, targetNode);
 				   sourceNode.addEdge(edge);
 				   targetNode.addEdge(edge);
@@ -273,6 +290,10 @@ public class DBManager {
 	   }//End try catch
 	   return wayID;
    }//End getWayIdByEdge
+   
+   /*
+    * 		Testing
+    */
    
    //Select * rows from table nodelist (for testing)
    public boolean selectNode(String param, String value) {

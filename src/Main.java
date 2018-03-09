@@ -51,11 +51,17 @@ public class Main {
 		
 		//Creating a Graph with OSM Nodes grabbed using WayID
 		ArrayList<OSMNode> nodes2 = db.getNodesbyWayId(4258427);
-		for (int i = 0; i < nodes.size(); i++) {
-			//System.out.println(nodes.get(i).getNodeID() + " / " + nodes.get(i).getLat() + " / " + nodes.get(i).getLon());
+		ArrayList<OSMEdge> edges2 = new ArrayList<>();
+		System.out.println(nodes2.size());
+		for (int i = 1; i < nodes2.size() ; i++) {
+			System.out.println(nodes2.get(i-1) + "/ " + nodes2.get(i) + " / " + (i - 1) + " / " + i);
+			OSMEdge tempEdge = new OSMEdge(4258427, nodes2.get(i -1), nodes2.get(i));
+			edges2.add(tempEdge);
+			nodes2.get(i-1).addEdge(tempEdge);
+			nodes2.get(i).addEdge(tempEdge);
 		}//End for
 		
-		Graph<OSMNode, DefaultEdge> nodeGraph2 = gt.createNodeGraph(nodes2);
+		Graph<OSMNode, OSMEdge> edgeGraph2 = gt.createEdgeGraph(edges2);
 		//System.out.println(nodeGraph2);
 
 		//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
@@ -65,7 +71,7 @@ public class Main {
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		//System.out.println(edgeGraph);
 
-		MapViewer mv = new MapViewer(edgeGraph);
+		MapViewer mv = new MapViewer(edgeGraph2);
 		
 		//Exporting Graph
 		try {

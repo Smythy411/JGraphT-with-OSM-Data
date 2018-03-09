@@ -8,6 +8,7 @@ public class OSMWay {
 	private int id;
 	private long wayID;
 	private ArrayList<OSMNode> nodes;
+	private ArrayList<OSMEdge> edges;
 	
 	/*
 	 * 		CONSTRUCTORS
@@ -16,13 +17,21 @@ public class OSMWay {
 	public OSMWay(int passedId, long passedWayID) {
 		this.id = passedId;
 		this.wayID = passedWayID;
-	}//End OSMEdge Constructor
+	}//End OSMWay Constructor
 	
 	public OSMWay(int passedId, long passedWayID, ArrayList<OSMNode> passedNodes) {
 		this.id = passedId;
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
-	}//End OSMEdge Constructor
+		this.setEdges(passedNodes);
+	}//End OSMWay Constructor
+	
+	public OSMWay(int passedId, long passedWayID, ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
+		this.id = passedId;
+		this.wayID = passedWayID;
+		this.nodes = passedNodes;
+		this.edges = passedEdges;
+	}//End OSMWay Constructor
 	
 	/*
 	 * 		METHODS
@@ -33,7 +42,7 @@ public class OSMWay {
 	}//End getWayID
 	
 	public void setNode(OSMNode passedNode) {
-		nodes.add(passedNode);
+		this.nodes.add(passedNode);
 	}//End setNode
 	
 	public void setNodes(ArrayList<OSMNode> passedNodes) {
@@ -43,18 +52,30 @@ public class OSMWay {
 	}//End setNodes
 	
 	public ArrayList<OSMNode> getNodes() {
-		return nodes;
+		return this.nodes;
 	}//End getNodes`
 	
 	public OSMNode getNode(long nodeID) {
 		OSMNode node = new OSMNode();
-		for (int i = 0; i < nodes.size(); i++) {
-			if(nodeID == nodes.get(i).getNodeID()) {
-				node = nodes.get(i);
+		for (int i = 0; i < this.nodes.size(); i++) {
+			if(nodeID == this.nodes.get(i).getNodeID()) {
+				node = this.nodes.get(i);
 			}//End if
 		}//End for
 		return node;
 	}//End getNode
 	
-
+	public void setEdges(ArrayList<OSMNode> passedNodes) {
+		for (int i = 1; i < passedNodes.size() ; i++) {
+			OSMEdge tempEdge = new OSMEdge(this.wayID, passedNodes.get(i -1), passedNodes.get(i));
+			this.edges.add(tempEdge);
+			passedNodes.get(i-1).addEdge(tempEdge);
+			passedNodes.get(i).addEdge(tempEdge);
+		}//End for
+	}//End setEdges
+	
+	public ArrayList<OSMEdge> getEdges() {
+		return this.edges;
+	}//End getEdges
+	
 }//End OSMEdge
