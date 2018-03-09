@@ -53,12 +53,12 @@ public class Main {
 		ArrayList<OSMNode> nodes2 = db.getNodesbyWayId(4258427);
 		ArrayList<OSMEdge> edges2 = new ArrayList<>();
 		System.out.println(nodes2.size());
-		for (int i = 1; i < nodes2.size() ; i++) {
-			System.out.println(nodes2.get(i-1) + "/ " + nodes2.get(i) + " / " + (i - 1) + " / " + i);
-			OSMEdge tempEdge = new OSMEdge(4258427, nodes2.get(i -1), nodes2.get(i));
+		for (int i = 0; i < nodes2.size() -1; i++) {
+			System.out.println(nodes2.get(i) + "/ " + nodes2.get(i + 1) + " / " + (i - 1) + " / " + i);
+			OSMEdge tempEdge = new OSMEdge(4258427, nodes2.get(i), nodes2.get(i + 1));
 			edges2.add(tempEdge);
-			nodes2.get(i-1).addEdge(tempEdge);
 			nodes2.get(i).addEdge(tempEdge);
+			nodes2.get(i + 1).addEdge(tempEdge);
 		}//End for
 		
 		Graph<OSMNode, OSMEdge> edgeGraph2 = gt.createEdgeGraph(edges2);

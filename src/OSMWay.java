@@ -9,6 +9,7 @@ public class OSMWay {
 	private long wayID;
 	private ArrayList<OSMNode> nodes;
 	private ArrayList<OSMEdge> edges;
+	private OSMNode sourceNode, endNode;
 	
 	/*
 	 * 		CONSTRUCTORS
@@ -24,6 +25,9 @@ public class OSMWay {
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
 		this.setEdges(passedNodes);
+		
+		this.sourceNode = passedNodes.get(0);
+		this.endNode = passedNodes.get(passedNodes.size());
 	}//End OSMWay Constructor
 	
 	public OSMWay(int passedId, long passedWayID, ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
@@ -31,6 +35,9 @@ public class OSMWay {
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
 		this.edges = passedEdges;
+		
+		this.sourceNode = passedNodes.get(0);
+		this.endNode = passedNodes.get(passedNodes.size());
 	}//End OSMWay Constructor
 	
 	/*
@@ -53,7 +60,7 @@ public class OSMWay {
 	
 	public ArrayList<OSMNode> getNodes() {
 		return this.nodes;
-	}//End getNodes`
+	}//End getNodes
 	
 	public OSMNode getNode(long nodeID) {
 		OSMNode node = new OSMNode();
@@ -64,6 +71,22 @@ public class OSMWay {
 		}//End for
 		return node;
 	}//End getNode
+	
+	public void setSourceNode(OSMNode node) {
+		this.sourceNode = node;
+	}//End setSourceNode
+	
+	public void setEndNode(OSMNode node) {
+		this.endNode = node;
+	}//End setEndNode
+	
+	public OSMNode getSourceNode() {
+		return this.sourceNode;
+	}//End getSourceNode
+	
+	public OSMNode setEndNode() {
+		return this.endNode;
+	}//End setEndNode
 	
 	public void setEdges(ArrayList<OSMNode> passedNodes) {
 		for (int i = 1; i < passedNodes.size() ; i++) {
