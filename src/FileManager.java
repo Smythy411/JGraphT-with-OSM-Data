@@ -73,39 +73,54 @@ public class FileManager {
 	        
 	        List<Node> ways = document.selectNodes("/osm/way");
 	        
-	        int j = 1;
-	        String sourceNode = " ";
-	        String targetNode = " ";
-	        for (Node way : ways) {
-	        	System.out.println(way.getName() + ": " + way.valueOf("@id"));
-	        	if (way.hasContent()) {
-	        		List<Node> nodes = way.selectNodes("*");
-	        		int n = 0;
-		        	for (int i = 0; i < nodes.size(); i++) {
-		        		if (nodes.get(i).getName() == "nd") {
-		        			String nodeRef =  nodes.get(i).valueOf("@ref");
-		        			if (n == 0) {
-		        				sourceNode = nodeRef;	
-		        			}//End if
-		        			//System.out.println(nodes.get(i).getName() + ": " + nodeRef);
-		        			if (db.selectNode("nodeID", nodeRef)) {
-			        			db.insert("waylist", new String[] {Integer.toString(j), way.valueOf("@id"), nodeRef});
-			        			j++;
-			        			n++;
-			        			targetNode = nodeRef;
-		        			}//End inner inner if
-		        		}//End inner if
-		        	}//End for
-	        		db.insert("edgelist", new String[] {
-	        				way.valueOf("@id"), sourceNode, targetNode
-	        				});
-	        	}//End outer if
-	        }//End for
+	        parseWays(ways);
 	        
     	} catch (DocumentException e) {
             e.printStackTrace();
         }//End try catch
 
     }//End parseXml()
+    
+    //Parsing Ways
+    public void parseWays(List<Node> ways) {
+        int j = 1;
+        for (Node way : ways) {
+        	System.out.println(way.getName() + ": " + way.valueOf("@id"));
+        	if (way.hasContent()) {
+        		List<Node> nodes = way.selectNodes("*");
+        		j = parseNodes(j, way.valueOf("@id"), nodes);
+        	}//End outer if
+        }//End for
+    }//End parseWays
+    
+    //Parsing nodes within ways for both WayList and EdgeList
+    public int parseNodes(int j, String wayID, List<Node> nodes) {
+    	String sourceNode = " ";
+        String targetNode = " ";
+        boolean nodeFound = false;
+    	for (int i = 0; i < nodes.size(); i++) {
+    		if (nodes.get(i).getName() == "nd") {
+    			String nodeRef =  nodes.get(i).valueOf("@ref");
+    			
+    			if (db.selectNode("nodeID", nodeRef)) {
+        			db.insert("waylist", new String[] {Integer.toString(j), wayID, nodeRef});
+        			
+        			if (nodeFound == false) {
+        				sourceNode = nodeRef;
+        				nodeFound = true;
+        			} else {
+        				targetNode = nodeRef;
+        				db.insert("edgelist", new String[] {Integer.toString(j - 1),
+        						wayID, sourceNode, targetNode
+        						});
+        				sourceNode = targetNode;
+        			}//End if else
+        			j++;
+    			}//End inner inner if
+    		}//End inner if
+    	}//End for
+    	
+    	return j;
+    }//End parseNodes
 
 }//End FileHandler

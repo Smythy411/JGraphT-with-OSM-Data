@@ -55,17 +55,18 @@ public class MapViewer {
     	addToPainter(source);
     	addToPainter(target);
     	
+    	addWayPoint(source);
+    	
     	//ArrayList<OSMEdge> full = new ArrayList<>();
-    	constructG(41, source, target);
+    	constructG(1, source, target);
     	System.out.println(full.size());
     	
-    	addToPainter(source);
     	
 	    List<GeoPosition> track = geopoints;
 	    
 	    drawRoute(waypoints, track);
 	    
-        mapViewer.setZoom(5);
+        mapViewer.setZoom(4);
         mapViewer.setAddressLocation(geopoints.get(0));
 	}//End Constructor
 	
@@ -77,6 +78,7 @@ public class MapViewer {
 		//Base Case
 		if (size <= 0) {
 			finished = true;
+			addWayPoint(source);
 		}//End if
 		
 		if (edges.size() == 1) {
@@ -120,8 +122,13 @@ public class MapViewer {
 		GeoPosition geoP = new GeoPosition(Double.parseDouble(node.getLat()), Double.parseDouble((node.getLon())));
 		geopoints.add(geoP);
 		 
-		waypoints.add(new DefaultWaypoint(geoP));
+		//waypoints.add(new DefaultWaypoint(geoP));
 	}//End AddToPainter
+	
+	public void addWayPoint(OSMNode node) {
+		GeoPosition geoP = new GeoPosition(Double.parseDouble(node.getLat()), Double.parseDouble((node.getLon())));
+		waypoints.add(new DefaultWaypoint(geoP));
+	}
 	
 	public void displayViewer() {
 	    // Display the viewer in a JFrame

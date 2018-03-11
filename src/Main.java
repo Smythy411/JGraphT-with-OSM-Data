@@ -71,7 +71,7 @@ public class Main {
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		//System.out.println(edgeGraph);
 
-		MapViewer mv = new MapViewer(edgeGraph2);
+		MapViewer mv = new MapViewer(edgeGraph);
 		
 		//Exporting Graph
 		try {
@@ -104,7 +104,7 @@ public class Main {
 	//Parses data from files and inserts it into the database
 	public static void dataSetUp() {
 		FileManager fm = new FileManager("resources/UseCaseNodes.csv", "resources/UseCaseWays.osm");
-		fm.openCSVFile();
+		//fm.openCSVFile();
 		fm.parseXml();
 	}//End dataSetUp()
 	
