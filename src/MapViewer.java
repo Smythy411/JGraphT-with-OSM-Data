@@ -25,6 +25,7 @@ public class MapViewer {
 	Graph<OSMNode, OSMEdge> graph;
 	ArrayList<GeoPosition>  geopoints= new ArrayList<>();
     Set<Waypoint> waypoints = new HashSet<Waypoint>();
+    GraphTesting gt = new GraphTesting();
     
     ArrayList<OSMEdge> full = new ArrayList<>();
     
@@ -58,7 +59,7 @@ public class MapViewer {
     	addWayPoint(source);
     	
     	//ArrayList<OSMEdge> full = new ArrayList<>();
-    	constructG(2, source, target);
+    	constructG(3, source, target);
     	System.out.println(full.size());
     	
     	
@@ -98,10 +99,9 @@ public class MapViewer {
 				addToPainter(target);
 				
 				if (edges.equals(target.getEdges())) {
-					//System.out.println("Edge Already visited");
+					System.out.println("Edge Already visited");
 				} else {
 					ArrayList<OSMEdge> subEdges = target.getEdges();
-					//System.out.println(subEdges);
 					for (int j = 0; j < subEdges.size(); j++) {
 						if (full.contains(subEdges.get(j))) {
 							

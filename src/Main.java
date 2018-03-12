@@ -28,63 +28,12 @@ public class Main {
         
 		GraphTesting gt = new GraphTesting();
 		
-		//Simple String Graph
-		DefaultDirectedGraph<String, DefaultEdge> stringGraph = gt.createStringGraph(new String[] {"v1", "v2", "v3", "v4", "v5"});
-		//System.out.println(stringGraph.toString());
-		
-		//Checking if Graph is cyclical
-		CycleDetector<String, DefaultEdge> cd = new CycleDetector<String, DefaultEdge>(stringGraph);
-		System.out.println(cd.detectCycles());
-		
 		DBManager db = new DBManager("GraphTesting");
 		
-		//Creating A Graph with OSM Nodes
-		ArrayList<OSMNode> nodes = new ArrayList<>();
-		for (int i = 1; i <= 5; i++) {
-			OSMNode node = db.getNodeById(i);
-			nodes.add(node);
-			//System.out.println(nodes.get(i - 1).getNodeID() + " / " + nodes.get(i - 1).getLat() + " / " + nodes.get(i - 1).getLon());
-		}//End for
+		//graphByWayID(gt, db, 4258427);
 		
-		Graph<OSMNode, DefaultEdge> nodeGraph = gt.createNodeGraph(nodes);
-		//System.out.println(nodeGraph);
+		createFullGraph(gt, db);
 		
-		//Creating a Graph with OSM Nodes grabbed using WayID
-		ArrayList<OSMNode> nodes2 = db.getNodesbyWayId(4258427);
-		ArrayList<OSMEdge> edges2 = new ArrayList<>();
-		System.out.println(nodes2.size());
-		for (int i = 0; i < nodes2.size() -1; i++) {
-			System.out.println(nodes2.get(i) + "/ " + nodes2.get(i + 1) + " / " + (i - 1) + " / " + i);
-			OSMEdge tempEdge = new OSMEdge(4258427, nodes2.get(i), nodes2.get(i + 1));
-			edges2.add(tempEdge);
-			nodes2.get(i).addEdge(tempEdge);
-			nodes2.get(i + 1).addEdge(tempEdge);
-		}//End for
-		
-		Graph<OSMNode, OSMEdge> edgeGraph2 = gt.createEdgeGraph(edges2);
-		//System.out.println(nodeGraph2);
-
-		//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
-		ArrayList<OSMNode> nodeList = db.getNodes();
-		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
-		
-		//Creating ways
-		ArrayList<OSMWay> ways = createWays(edges);
-		
-		/*
-		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
-		//System.out.println(edgeGraph);
-
-		MapViewer mv = new MapViewer(edgeGraph);
-		
-		//Exporting Graph
-		try {
-			exportGraph(edgeGraph);
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}//End try catch
-*/
 		//Closing Database
 		db.close();
 	}//End main()
@@ -125,6 +74,45 @@ public class Main {
 		cE.exportGraph(g, writer);
 	}//End exportGraph
 	
+	//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
+	public static void createFullGraph(GraphTesting gt, DBManager db) {
+		ArrayList<OSMNode> nodeList = db.getNodes();
+		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
+		
+		//Creating ways
+		//ArrayList<OSMWay> ways = createWays(edges);
+		
+		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
+
+		MapViewer mv = new MapViewer(edgeGraph);
+		
+		//Exporting Graph
+		try {
+			exportGraph(edgeGraph);
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}//End try catch
+		
+	}//End createFullGraph
+	
+	//Creating a Graph with OSM Nodes grabbed using WayID (*TESTING*)
+	public static void graphByWayID(GraphTesting gt, DBManager db, long wayID) {
+		ArrayList<OSMNode> nodes = db.getNodesbyWayId(wayID);
+		ArrayList<OSMEdge> edges = new ArrayList<>();
+		for (int i = 0; i < nodes.size() -1; i++) {
+			System.out.println(nodes.get(i) + "/ " + nodes.get(i + 1) + " / " + (i - 1) + " / " + i);
+			OSMEdge tempEdge = new OSMEdge(4258427, nodes.get(i), nodes.get(i + 1));
+			edges.add(tempEdge);
+			nodes.get(i).addEdge(tempEdge);
+			nodes.get(i + 1).addEdge(tempEdge);
+		}//End for
+		
+		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
+		System.out.println(edgeGraph);
+	}//End graphByWayID
+	
+	//Creating ways
 	public static ArrayList<OSMWay> createWays(ArrayList<OSMEdge> edges) {
 		ArrayList<OSMWay> ways = new ArrayList<OSMWay>();
 		long wayID = edges.get(0).getWayID();
