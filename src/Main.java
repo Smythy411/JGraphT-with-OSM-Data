@@ -95,7 +95,7 @@ public class Main {
 		
 		ArrayList<OSMEdge> subGraph = gt.constructSubGraph(false, 1, source, target, new ArrayList<OSMEdge>());
 		System.out.println(subGraph.size() + " : " + subGraph);
-		MapViewer mv = new MapViewer(subGraph);
+		//MapViewer mv = new MapViewer(subGraph);
 		
 		//Exporting Graph
 		try {
