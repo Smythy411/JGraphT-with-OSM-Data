@@ -2,14 +2,14 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/commons-lang3-3.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/dom4j-2.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jaxen-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/opencsv-4.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/postgresql-42.2.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jgrapht-1.1.0/jgrapht-1.1.0/lib/jgrapht-core-1.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jxmapviewer2-2.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/commons-logging-1.1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Eoin/Downloads/jgrapht-1.1.0/jgrapht-1.1.0/lib/jgrapht-io-1.1.0.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/commons-lang3-3.7.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/dom4j-2.1.0.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/jaxen-1.1.1.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/jgrapht-core-1.1.0.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/jgrapht-io-1.1.0.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/jxmapviewer2-2.3.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/opencsv-4.1.jar"/>
+	<classpathentry kind="lib" path="OSM&amp;JGraphT_lib/postgresql-42.2.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

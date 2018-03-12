@@ -6,16 +6,19 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.graph.*;
 import org.jgrapht.io.CSVExporter;
 import org.jgrapht.io.CSVFormat;
 import org.jgrapht.io.ComponentNameProvider;
 import org.jgrapht.io.IntegerComponentNameProvider;
 import org.jgrapht.io.StringComponentNameProvider;
+import org.jgrapht.traverse.DepthFirstIterator;
 
 public class Main {
 
@@ -83,8 +86,16 @@ public class Main {
 		//ArrayList<OSMWay> ways = createWays(edges);
 		
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
-
-		MapViewer mv = new MapViewer(edgeGraph);
+		
+		  //Graph Traversal + Map Viewing
+		
+	    OSMEdge[] edgeSet = edgeGraph.edgeSet().toArray(new OSMEdge[edgeGraph.edgeSet().size()]);
+	    OSMNode source = edgeSet[0].getSourceNode();
+    	OSMNode target = edgeSet[0].getTargetNode();
+		
+		ArrayList<OSMEdge> subGraph = gt.constructSubGraph(false, 1, source, target, new ArrayList<OSMEdge>());
+		System.out.println(subGraph.size() + " : " + subGraph);
+		MapViewer mv = new MapViewer(subGraph);
 		
 		//Exporting Graph
 		try {

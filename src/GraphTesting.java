@@ -63,4 +63,48 @@ public class GraphTesting {
 		return g;
 	}//End createStringGraph
 	
+	public ArrayList<OSMEdge> constructSubGraph(boolean finished, int size, OSMNode source, OSMNode target, ArrayList<OSMEdge> full) {
+		if (finished) {
+			return full;
+		}//end if
+		ArrayList<OSMEdge> edges = target.getEdges();
+		
+		//Base Case
+		if (size <= 0) {
+			finished = true;
+		}//End if
+		
+		if (edges.size() == 1) {
+			//System.out.println("Dead End");
+			target = edges.get(0).getTargetNode();
+			return full;
+		} else {
+			for (int i = 0; i < edges.size(); i++) {
+				if (finished) {
+					return full;
+				}//end if
+				
+				target = edges.get(i).getTargetNode();
+				
+				if (edges.equals(target.getEdges())) {
+					//System.out.println("Edge Already visited");
+				} else {
+					ArrayList<OSMEdge> subEdges = target.getEdges();
+					for (int j = 0; j < subEdges.size(); j++) {
+						if (full.contains(subEdges.get(j))) {
+							
+						} else {
+							full.add((subEdges.get(j)));
+							//System.out.println(full);
+							constructSubGraph(finished, size--, target, subEdges.get(j).getTargetNode(), full);
+						}//End if else
+					}//End for
+				}//End if else
+			}//End for
+		}//End if else
+		
+		return full;
+		
+	}//End constructG
+	
 }//End GraphTesting
