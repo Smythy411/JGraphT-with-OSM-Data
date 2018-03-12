@@ -58,7 +58,7 @@ public class MapViewer {
     	addWayPoint(source);
     	
     	//ArrayList<OSMEdge> full = new ArrayList<>();
-    	constructG(1, source, target);
+    	constructG(2, source, target);
     	System.out.println(full.size());
     	
     	

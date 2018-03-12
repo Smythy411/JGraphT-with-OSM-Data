@@ -68,6 +68,10 @@ public class Main {
 		ArrayList<OSMNode> nodeList = db.getNodes();
 		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
 		
+		//Creating ways
+		ArrayList<OSMWay> ways = createWays(edges);
+		
+		/*
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		//System.out.println(edgeGraph);
 
@@ -80,7 +84,7 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}//End try catch
-
+*/
 		//Closing Database
 		db.close();
 	}//End main()
@@ -120,5 +124,31 @@ public class Main {
 		PrintWriter writer = new PrintWriter("resources/graph.csv", "UTF-8");
 		cE.exportGraph(g, writer);
 	}//End exportGraph
+	
+	public static ArrayList<OSMWay> createWays(ArrayList<OSMEdge> edges) {
+		ArrayList<OSMWay> ways = new ArrayList<OSMWay>();
+		long wayID = edges.get(0).getWayID();
+		
+		ArrayList<OSMNode> tempNodes = new ArrayList<>();
+		ArrayList<OSMEdge> tempEdges = new ArrayList<>();
+		for (int i = 0; i < edges.size(); i++) {
+			long tempWID = edges.get(i).getWayID();
+			
+			if (wayID == tempWID) {
+				tempNodes.add(edges.get(i).getSourceNode());
+				tempEdges.add(edges.get(i));
+			} else {
+				tempNodes.add(edges.get(i -1).getTargetNode());
+				OSMWay way = new OSMWay(wayID, tempNodes, tempEdges);
+				ways.add(way);
+				
+				wayID = tempWID;
+			}//end if else
+		}//end for
+		
+		System.out.println(ways.size() + " ways created.");
+		
+		return ways;
+	}//End createWays
 
 }//End Main

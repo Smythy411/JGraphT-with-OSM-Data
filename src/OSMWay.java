@@ -30,14 +30,15 @@ public class OSMWay {
 		this.endNode = passedNodes.get(passedNodes.size());
 	}//End OSMWay Constructor
 	
-	public OSMWay(int passedId, long passedWayID, ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
-		this.id = passedId;
+	public OSMWay(long passedWayID, ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
 		this.edges = passedEdges;
 		
 		this.sourceNode = passedNodes.get(0);
-		this.endNode = passedNodes.get(passedNodes.size());
+		
+		int end =  passedNodes.size() - 1;
+		this.endNode = passedNodes.get(end);
 	}//End OSMWay Constructor
 	
 	/*
