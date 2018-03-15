@@ -11,6 +11,8 @@ public class OSMEdge extends DefaultEdge{
 	private long edgeID;
 	private long wayID;
 	OSMNode sourceNode, targetNode;
+	Double distance;
+	boolean visited;
 	
 	/*
 	 * 		CONSTRUCTORS
@@ -22,11 +24,13 @@ public class OSMEdge extends DefaultEdge{
 	
 	public OSMEdge(long wID) {
 		this.wayID = wID;
+		this.visited = false;
 	}//End constructor
 	
 	public OSMEdge(long eID, long wID) {
 		this.edgeID = eID;
 		this.wayID = wID;
+		this.visited = false;
 	}//End constructor
 	
 	public OSMEdge(OSMNode source, OSMNode target) {
@@ -38,12 +42,16 @@ public class OSMEdge extends DefaultEdge{
 		*/
 		this.sourceNode = source;
 		this.targetNode = target;
+		this.visited = false;
+		this.distance = calculateDistance(source, target);
 	}//End constructor
 	
 	public OSMEdge(long wID, OSMNode source, OSMNode target) {
 		this.wayID = wID;
 		this.sourceNode = source;
 		this.targetNode = target;
+		this.visited = false;
+		this.distance = calculateDistance(source, target);
 	}//End constructor
 	
 	public OSMEdge(long eID, long wID, OSMNode source, OSMNode target) {
@@ -51,6 +59,8 @@ public class OSMEdge extends DefaultEdge{
 		this.wayID = wID;
 		this.sourceNode = source;
 		this.targetNode = target;
+		this.visited = false;
+		this.distance = calculateDistance(source, target);
 	}//End constructor
 	
 	/*
@@ -88,6 +98,33 @@ public class OSMEdge extends DefaultEdge{
 	public void setTargetNode(OSMNode target) {
 		this.targetNode = target;
 	}//End setTargetNode()
+	
+	public OSMNode getNeighbour(OSMNode v) {
+		if (v == this.sourceNode ) {
+			return this.targetNode; 
+		} else if (v == this.targetNode){
+			return this.sourceNode;
+		} else {
+			return null;
+		}//End if else
+	}//End getNeighbour
+	
+	public void setVisited() {
+		this.visited = true;
+	}//End setVisited()
+	
+	public boolean getVisited() {
+		return this.visited;
+	}//End getVisited()
+	
+	public Double calculateDistance(OSMNode source, OSMNode target) {
+		return Haversine.distance(Double.parseDouble(source.getLat()), Double.parseDouble(source.getLon()),
+				Double.parseDouble(target.getLat()), Double.parseDouble(target.getLon()));
+	}//End clalculateDistance()
+	
+	public Double getDistance() {
+		return this.distance;
+	}//End getDistance()
 	
     @Override
     public String toString()

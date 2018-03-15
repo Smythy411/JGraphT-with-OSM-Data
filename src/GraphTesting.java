@@ -2,9 +2,15 @@
  */
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import org.jgrapht.*;
 import org.jgrapht.graph.*;
+import org.jgrapht.traverse.ClosestFirstIterator;
+import org.jgrapht.traverse.DegeneracyOrderingIterator;
+import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.GraphIterator;
+import org.jgrapht.traverse.RandomWalkIterator;
 
 public class GraphTesting {
 	
@@ -62,6 +68,47 @@ public class GraphTesting {
 		}//End for
 		return g;
 	}//End createStringGraph
+	
+	public ArrayList<OSMEdge> constructPincerGraph(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph) {
+		ArrayList<OSMNode> constructedGraph = new ArrayList<>();
+		ArrayList<OSMEdge> edges = new ArrayList<>();
+		
+		GraphIterator<OSMNode, OSMEdge> iterator = new DepthFirstIterator<OSMNode, OSMEdge>(graph);
+		int i = 0;
+		while (iterator.hasNext()) {
+			if (i < size) {
+				constructedGraph.add(iterator.next());
+				i++;
+				System.out.println(constructedGraph);
+			} else {
+				for (int j = 0; j < size - 1; j++) {
+					OSMNode tempNode = constructedGraph.get(j);
+					ArrayList<OSMEdge> tempEdges =  tempNode.getEdges();
+					for (int k = 0; k < tempEdges.size(); k++) {
+						OSMEdge tempEdge = tempEdges.get(k);
+						OSMNode neighbour = tempEdge.getNeighbour(tempNode);
+						if (constructedGraph.get(j + 1) == neighbour) {
+							System.out.println(tempEdge.getDistance());
+							edges.add(tempEdge);
+						}//End if 
+					}//End inner for
+				}//End outer for
+				System.out.println(edges.size() + " : " + constructedGraph.size());
+				break;
+			}//End if else
+		}//End while
+		
+		
+		/*for (int i = 0; i < nextEdges.size(); i++) {
+			Random rand = new Random();
+			int choice = rand.nextInt(nextEdges.size());
+			
+			System.out.println(i + " : " + choice);
+			System.out.println(nextEdges.get(i));
+		}*/
+		
+		return edges;
+	}
 	
 	public ArrayList<OSMEdge> constructSubGraph(boolean finished, int size, OSMNode source, OSMNode target, ArrayList<OSMEdge> full) {
 		if (finished) {

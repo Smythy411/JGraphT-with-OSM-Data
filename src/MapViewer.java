@@ -37,10 +37,8 @@ public class MapViewer {
 		
 		//Inital Edge
 	    OSMNode source = edges.get(0).getSourceNode();
-    	OSMNode target = edges.get(0).getTargetNode();
     	
     	addToPainter(source);
-    	addToPainter(target);
     	
     	addWayPoint(source);
 		
@@ -52,7 +50,7 @@ public class MapViewer {
 		
 		drawRoute(waypoints, track);
 		    
-	     mapViewer.setZoom(4);
+	     mapViewer.setZoom(5);
 	     mapViewer.setAddressLocation(geopoints.get(0));
 	}//End Constructor
 	

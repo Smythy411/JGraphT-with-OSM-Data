@@ -93,10 +93,14 @@ public class Main {
 	    OSMNode source = edgeSet[0].getSourceNode();
     	OSMNode target = edgeSet[0].getTargetNode();
 		
+    	/*
 		ArrayList<OSMEdge> subGraph = gt.constructSubGraph(false, 1, source, target, new ArrayList<OSMEdge>());
 		System.out.println(subGraph.size() + " : " + subGraph);
-		//MapViewer mv = new MapViewer(subGraph);
-		
+		MapViewer mv = new MapViewer(subGraph);
+		*/
+    	
+    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(100, source, edgeGraph);
+    	MapViewer mv = new MapViewer(pincerGraph);
 		//Exporting Graph
 		try {
 			exportGraph(edgeGraph);
