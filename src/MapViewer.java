@@ -50,7 +50,7 @@ public class MapViewer {
 		
 		drawRoute(waypoints, track);
 		    
-	     mapViewer.setZoom(5);
+	     mapViewer.setZoom(4);
 	     mapViewer.setAddressLocation(geopoints.get(0));
 	}//End Constructor
 	

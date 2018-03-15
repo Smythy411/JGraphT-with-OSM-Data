@@ -99,8 +99,14 @@ public class Main {
 		MapViewer mv = new MapViewer(subGraph);
 		*/
     	
+    	/*
+    	
     	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(100, source, edgeGraph);
     	MapViewer mv = new MapViewer(pincerGraph);
+    	*/
+    	
+    	ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(2500, source, edgeGraph);
+    	MapViewer mv = new MapViewer(randomGraph);
 		//Exporting Graph
 		try {
 			exportGraph(edgeGraph);

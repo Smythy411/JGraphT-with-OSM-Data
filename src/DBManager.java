@@ -253,11 +253,7 @@ public class DBManager {
 			   if (sourceNode == targetNode) {
 				  // System.out.println("Loops not allowed");
 			   } else {			   
-				   /*
-				    * 		REPLACE WHEN DB IS UPDATED
 				   OSMEdge edge = new OSMEdge(rs.getLong("edgeID"), rs.getLong("wayID"), sourceNode, targetNode);
-				   */
-				   OSMEdge edge = new OSMEdge(rs.getLong("wayID"), sourceNode, targetNode);
 				   sourceNode.addEdge(edge);
 				   targetNode.addEdge(edge);
 				   edges.add(edge);

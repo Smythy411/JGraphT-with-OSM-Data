@@ -11,7 +11,7 @@ public class OSMEdge extends DefaultEdge{
 	private long edgeID;
 	private long wayID;
 	OSMNode sourceNode, targetNode;
-	Double distance;
+	Double distance = null;
 	boolean visited;
 	
 	/*

@@ -8,6 +8,7 @@ public class OSMNode {
 	private long nodeID;
 	private String lat;
 	private String lon;
+	boolean visited;
 	
 	ArrayList<OSMEdge> edges = new ArrayList<OSMEdge>();
 	
@@ -25,6 +26,7 @@ public class OSMNode {
 	
 	public OSMNode(long passedNodeID) {
 		this.nodeID = passedNodeID;
+		this.visited = false;
 	}//End passedOSMNode
 	
 	public OSMNode(int passedId, long passedNodeID, String passedLat, String passedLon) {
@@ -32,12 +34,14 @@ public class OSMNode {
 		this.nodeID = passedNodeID;
 		this.lat = passedLat;
 		this.lon = passedLon;
+		this.visited = false;
 	}//End OSMNode constructor
 	
 	public OSMNode(long passedNodeID, String passedLat, String passedLon) {
 		this.nodeID = passedNodeID;
 		this.lat = passedLat;
 		this.lon = passedLon;
+		this.visited = false;
 	}//End OSMNode Constructor
 	
 	/*
@@ -68,13 +72,21 @@ public class OSMNode {
 		return this.lon;
 	}//End getNodeID
 	
+	public void setVisited() {
+		this.visited = true;
+	}//End setVisited()
+	
+	public boolean getVisited() {
+		return this.visited;
+	}//End getVisited()
+	
 	public void addEdge(OSMEdge e) {
 		this.edges.add(e);
-	}
+	}//End addEdge
 	
 	public ArrayList<OSMEdge> getEdges() {
 		return this.edges;
-	}
+	}//End getEdges
 	
     @Override
     public String toString()
