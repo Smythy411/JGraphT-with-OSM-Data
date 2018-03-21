@@ -5,23 +5,28 @@ import java.util.ArrayList;
 
 public class OSMWay {
 	
-	private int id;
 	private long wayID;
 	private ArrayList<OSMNode> nodes;
 	private ArrayList<OSMEdge> edges;
 	private OSMNode sourceNode, endNode;
+	private String highway, landuse, name;
 	
 	/*
 	 * 		CONSTRUCTORS
 	 */
 	
-	public OSMWay(int passedId, long passedWayID) {
-		this.id = passedId;
+	public OSMWay(long passedWayID) {
 		this.wayID = passedWayID;
 	}//End OSMWay Constructor
 	
-	public OSMWay(int passedId, long passedWayID, ArrayList<OSMNode> passedNodes) {
-		this.id = passedId;
+	public OSMWay(long passedWayID, String passedName, String passedLanduse, String passedHighway) {
+		this.wayID = passedWayID;
+		this.name =passedName;
+		this.landuse = passedLanduse;
+		this.highway = passedHighway;
+	}//End Constructor
+	
+	public OSMWay(long passedWayID, ArrayList<OSMNode> passedNodes) {
 		this.wayID = passedWayID;
 		this.nodes = passedNodes;
 		this.setEdges(passedNodes);
@@ -39,6 +44,21 @@ public class OSMWay {
 		
 		int end =  passedNodes.size() - 1;
 		this.endNode = passedNodes.get(end);
+	}//End OSMWay Constructor
+	
+	public OSMWay(long passedWayID, ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges, String lnd, String nm, String hway) {
+		this.wayID = passedWayID;
+		this.nodes = passedNodes;
+		this.edges = passedEdges;
+		
+		this.sourceNode = passedNodes.get(0);
+		
+		int end =  passedNodes.size() - 1;
+		this.endNode = passedNodes.get(end);
+		
+		this.landuse = lnd;
+		this.name = nm;
+		this.highway = hway;
 	}//End OSMWay Constructor
 	
 	/*
@@ -98,8 +118,38 @@ public class OSMWay {
 		}//End for
 	}//End setEdges
 	
+	public void setName(String nm) {
+		this.name  = nm;
+	}//End setName
+	
+	public String getName() {
+		return this.name;
+	}//End getName
+	
+	public void setLanduse(String lnd) {
+		this.name  = lnd;
+	}//End setLanduse
+	
+	public String getLanduse() {
+		return this.landuse;
+	}//End getLanduse
+	
+	public void setHighway(String hway) {
+		this.name  = hway;
+	}//End setHighway
+	
+	public String getHighway() {
+		return this.highway;
+	}//End getHighway
+	
 	public ArrayList<OSMEdge> getEdges() {
 		return this.edges;
 	}//End getEdges
+	
+    @Override
+    public String toString()
+    {
+        return this.wayID + " : " + this.edges;
+    }//End toString
 	
 }//End OSMEdge

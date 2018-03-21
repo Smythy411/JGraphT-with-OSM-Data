@@ -27,7 +27,7 @@ public class Main {
 		//SetUP
 		
 		//databaseSetUp();
-		dataSetUp();
+		//dataSetUp();
         
 		GraphTesting gt = new GraphTesting();
 		
@@ -89,6 +89,9 @@ public class Main {
 	public static void createFullGraph(GraphTesting gt, DBManager db) {
 		ArrayList<OSMNode> nodeList = db.getNodes();
 		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
+		ArrayList<OSMWay> ways = db.getWays(nodeList, edges);
+		
+		System.out.println(ways.size());
 		
 		//Creating ways
 		//ArrayList<OSMWay> ways = createWays(edges);

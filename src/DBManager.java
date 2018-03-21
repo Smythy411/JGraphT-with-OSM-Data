@@ -1,10 +1,12 @@
 /*DBManager handles all interactions with the postgres database
  */
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.sql.ResultSet;
 
 public class DBManager {
@@ -249,6 +251,50 @@ public class DBManager {
 	   
 	   return nodes;
    }//End getNodesByWayId
+   
+   /*
+    * 		Ways
+    */
+   
+   public ArrayList<OSMWay> getWays(ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
+	   ArrayList<OSMWay> ways = new ArrayList<>();
+	   try {
+		   Statement stmt = c.createStatement();
+		   ResultSet rs = stmt.executeQuery("SELECT * FROM ways;");
+		   while(rs.next()) {
+			   long wayID = rs.getLong("wayid");
+			   ArrayList<OSMNode> tempNodes = new ArrayList<>();
+			   ArrayList<OSMEdge> tempEdges = new ArrayList<>();
+				for (int i = 0; i < passedEdges.size(); i++) {
+					long tempWID = passedEdges.get(i).getWayID();	
+					if (wayID == tempWID) {
+						tempEdges.add(passedEdges.get(i));
+						tempNodes.add(passedEdges.get(i).getTargetNode());
+					}//end if
+				}//end for
+			   /*
+			   Array z = rs.getArray("nodes");
+			   String[] nds = (String[])z.getArray();
+			   */
+			   String name = rs.getString("name");
+			   String landuse = rs.getString("landuse");
+			   String highway = rs.getString("highway");
+			   if (tempEdges.size() <= 0) {
+				   OSMWay way = new OSMWay(wayID, name, landuse, highway);
+				   ways.add(way);
+			   } else {
+				   OSMWay way = new OSMWay(wayID, tempNodes, tempEdges, name, landuse, highway);
+				   ways.add(way);
+			   }//End if else
+		   }//End while
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return ways;
+   }
    
    /*
     * 		EdgeList
