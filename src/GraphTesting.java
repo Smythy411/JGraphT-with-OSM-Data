@@ -79,15 +79,18 @@ public class GraphTesting {
 	
 	
 	public ArrayList<OSMEdge> constructRandomWalk(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph) {
+		MapViewer test = new MapViewer(source);
+		System.out.println(source);
 		ArrayList<OSMNode> constructedGraph = new ArrayList<>();
 		ArrayList<OSMEdge> edges = new ArrayList<>();
 		
 		GraphIterator<OSMNode, OSMEdge> iterator = new RandomWalkIterator<OSMNode, OSMEdge>(graph, source, true, size);
+		constructedGraph.add(source);
 		int i = 0;
 		while (iterator.hasNext()) {
 			OSMNode node = iterator.next();
 			if (node.getVisited() == true) {
-				System.out.println("Node already visited");
+				//System.out.println("Node already visited");
 			} else {
 				constructedGraph.add(node);
 				node.setVisited();
@@ -98,7 +101,7 @@ public class GraphTesting {
 		System.out.println(constructedGraph);
 		Double distance = 0.0;
 		for (int j = 0; j < i - 1; j++) {
-			if (distance <= 5.2) {
+			if (distance <= 2.6) {
 				OSMNode tempNode = constructedGraph.get(j);
 				ArrayList<OSMEdge> tempEdges =  tempNode.getEdges();
 				for (int k = 0; k < tempEdges.size(); k++) {
@@ -107,6 +110,7 @@ public class GraphTesting {
 					if (constructedGraph.get(j + 1) == neighbour) {
 						edges.add(tempEdge);
 						distance = distance + tempEdge.getDistance();
+						test.updateMap(tempEdge);
 					}//End if 
 				}//End inner for
 			} else {

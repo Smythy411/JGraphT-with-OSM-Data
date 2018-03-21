@@ -22,14 +22,9 @@ import org.jxmapviewer.viewer.WaypointPainter;
 public class MapViewer {
 	
 	JXMapViewer mapViewer = new JXMapViewer();
-	Graph<OSMNode, OSMEdge> graph;
 	ArrayList<GeoPosition>  geopoints= new ArrayList<>();
     Set<Waypoint> waypoints = new HashSet<Waypoint>();
-    GraphTesting gt = new GraphTesting();
-    
-    ArrayList<OSMEdge> full = new ArrayList<>();
-    
-    boolean finished= false;
+    List<GeoPosition> track;
 	
 	public MapViewer(ArrayList<OSMEdge> edges) {
 		displayViewer();
@@ -46,13 +41,34 @@ public class MapViewer {
 			addToPainter(edges.get(i).getTargetNode());
 		}//end for
 		
-		List<GeoPosition> track = geopoints;
+		track = geopoints;
 		
 		drawRoute(waypoints, track);
 		    
 	     mapViewer.setZoom(4);
 	     mapViewer.setAddressLocation(geopoints.get(0));
 	}//End Constructor
+	
+	public MapViewer(OSMNode source) {
+		displayViewer();
+		tileSetUp();
+		
+		addToPainter(source);
+    	addWayPoint(source);
+    	
+    	track = geopoints;
+    	
+    	drawRoute(waypoints, track);
+    	
+    	mapViewer.setZoom(4);
+	    mapViewer.setAddressLocation(geopoints.get(0));
+	}//End constructor
+	
+	public void updateMap(OSMEdge edge) {
+		this.mapViewer.repaint();
+		addToPainter(edge.getTargetNode());
+		drawRoute(waypoints, track);
+	}
 	
 	//Adds a node to the relevant painters
 	public void addToPainter(OSMNode node) {
