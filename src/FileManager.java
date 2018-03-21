@@ -95,12 +95,16 @@ public class FileManager {
     
     //Parsing nodes within ways for both WayList and EdgeList
     public int parseNodes(int j, String wayID, List<Node> nodes) {
+    	ArrayList<String> nodeIDs =  new ArrayList<>();
+    	String landuse = null, highway = null, name = null;
     	String sourceNode = " ";
         String targetNode = " ";
         boolean nodeFound = false;
     	for (int i = 0; i < nodes.size(); i++) {
-    		if (nodes.get(i).getName() == "nd") {
+    		Node currentNode = nodes.get(i);
+    		if (currentNode.getName() == "nd") {
     			String nodeRef =  nodes.get(i).valueOf("@ref");
+    			nodeIDs.add(nodeRef);
     			
     			if (db.selectNode("nodeID", nodeRef)) {
         			db.insert("waylist", new String[] {Integer.toString(j), wayID, nodeRef});
@@ -117,9 +121,33 @@ public class FileManager {
         			}//End if else
         			j++;
     			}//End inner inner if
-    		}//End inner if
+    		} else if (currentNode.getName() == "tag") {
+    			String tagRef = currentNode.valueOf("@k");
+    			String value = currentNode.valueOf("@v");
+    			System.out.println(tagRef + " : " + value);
+    			if (tagRef.equals("landuse")) {
+    				landuse = value;
+    			}else if (tagRef.equals("highway")) {
+    				highway = value;
+    			} else if (tagRef.equals("name")) {
+    				int indexOf = value.indexOf('\'');
+    				if (indexOf != -1) {
+    					System.out.println("REGEX");
+    					value = value.replaceFirst("\'", "");
+    				}
+    				name = value;
+    			}//End inner if else
+    		}//End outer if else
     	}//End for
-    	
+    	String nodeString = "{";
+    	for (int i = 0; i < nodeIDs.size(); i++) {
+    		if (i == nodeIDs.size() - 1) {
+    			nodeString = nodeString + nodeIDs.get(i) + "}";
+    		} else {
+    			nodeString = nodeString + nodeIDs.get(i) + ", ";
+    		}
+    	}//End for
+    	db.insert("ways", new String[] {wayID, nodeString, highway, name, landuse});
     	return j;
     }//End parseNodes
 

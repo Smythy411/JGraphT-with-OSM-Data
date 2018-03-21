@@ -78,7 +78,7 @@ public class GraphTesting {
 	 */
 	
 	
-	public ArrayList<OSMEdge> constructRandomWalk(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph) {
+	public ArrayList<OSMEdge> constructRandomWalk(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph, int nodeCount) {
 		MapViewer test = new MapViewer(source);
 		System.out.println(source);
 		ArrayList<OSMNode> constructedGraph = new ArrayList<>();
@@ -88,14 +88,18 @@ public class GraphTesting {
 		constructedGraph.add(source);
 		int i = 0;
 		while (iterator.hasNext()) {
-			OSMNode node = iterator.next();
-			if (node.getVisited() == true) {
-				//System.out.println("Node already visited");
+			if (i >= nodeCount) {
+				break;
 			} else {
-				constructedGraph.add(node);
-				node.setVisited();
-				i++;
-			}
+				OSMNode node = iterator.next();
+				if (node.getVisited() == true) {
+					//System.out.println("Node already visited");
+				} else {
+					constructedGraph.add(node);
+					node.setVisited();
+					i++;
+				}//End inner if else
+			}//End outer if else
 			
 		}//End while
 		System.out.println(constructedGraph);
@@ -104,15 +108,19 @@ public class GraphTesting {
 			if (distance <= 2.6) {
 				OSMNode tempNode = constructedGraph.get(j);
 				ArrayList<OSMEdge> tempEdges =  tempNode.getEdges();
-				for (int k = 0; k < tempEdges.size(); k++) {
-					OSMEdge tempEdge = tempEdges.get(k);
-					OSMNode neighbour = tempEdge.getNeighbour(tempNode);
-					if (constructedGraph.get(j + 1) == neighbour) {
-						edges.add(tempEdge);
-						distance = distance + tempEdge.getDistance();
-						test.updateMap(tempEdge);
-					}//End if 
-				}//End inner for
+				if (tempEdges.size() == 1) {
+					//System.out.println("Dead End");
+				} else {
+					for (int k = 0; k < tempEdges.size(); k++) {
+						OSMEdge tempEdge = tempEdges.get(k);
+						OSMNode neighbour = tempEdge.getNeighbour(tempNode);
+						if (constructedGraph.get(j + 1) == neighbour) {
+							edges.add(tempEdge);
+							distance = distance + tempEdge.getDistance();
+							test.updateMap(tempEdge);
+						}//End if 
+					}//End inner for
+				}
 			} else {
 				System.out.println("Max disatance reached : " + distance);
 				break;
@@ -121,6 +129,25 @@ public class GraphTesting {
 		System.out.println(edges.size() + " : " + constructedGraph.size());
 		System.out.println("Max disatance reached : " + distance);
 		
+		/*
+		 *  Run through with no max distance
+		for (int j = 0; j < i - 1; j++) {
+			OSMNode tempNode = constructedGraph.get(j);
+			ArrayList<OSMEdge> tempEdges =  tempNode.getEdges();
+			for (int k = 0; k < tempEdges.size(); k++) {
+				OSMEdge tempEdge = tempEdges.get(k);
+				OSMNode neighbour = tempEdge.getNeighbour(tempNode);
+				if (constructedGraph.get(j + 1) == neighbour) {
+					edges.add(tempEdge);
+					distance = distance + tempEdge.getDistance();
+					test.updateMap(tempEdge);
+				}//End if 
+			}//End inner for
+		}//End out for
+		System.out.println("With NO max distance: ");
+		System.out.println(edges.size() + " : " + constructedGraph.size());
+		System.out.println("Max disatance reached : " + distance);
+		*/
 		return edges;
 	}//End ConstructRandomWalk()
 	

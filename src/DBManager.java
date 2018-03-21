@@ -76,6 +76,26 @@ public class DBManager {
 	   }//End try catch
    }//End createNodeTable
    
+   public void createWaysTable() {
+	   try {
+		   Statement stmt = c.createStatement();
+		   String sql = "CREATE TABLE WAYS " +
+		      "(wayID BIGINT PRIMARY KEY NOT NULL," +
+		      " nodes BIGINT[]," +
+		      " highway varchar(50)," +
+		      " name varchar(50), " +
+		      " landuse varchar(50));";
+		   System.out.println(sql);
+		   stmt.executeUpdate(sql);
+		   stmt.close();
+		   
+		   System.out.println("Table Created Successfully\n");
+	   } catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+   }
+   
  //Create a table Edgelist in database connection
    public void createEdgeTable() {
 	   try {
@@ -120,6 +140,10 @@ public class DBManager {
 		   } else if (table == "edgelist") {
 			   sql = "INSERT INTO EDGELIST (edgeId, wayID, sourceNode, targetNode)" +
 					   "VALUES(" + values[0] + ", " + values[1] + ", " + values[2] + ", " + values[3]  +");";
+			   //System.out.println(sql);
+		   } else if (table == "ways") {
+			   sql = "INSERT INTO WAYS " +
+					   "VALUES(" + values[0] + ", '" + values[1] + "', '" + values[2] + "', '" + values[3]  +"', '" + values[4] + "');";
 			   System.out.println(sql);
 		   }else {
 			   System.out.println("Invalid table name");

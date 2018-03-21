@@ -27,13 +27,21 @@ public class Main {
 		//SetUP
 		
 		//databaseSetUp();
-		//dataSetUp();
+		dataSetUp();
         
 		GraphTesting gt = new GraphTesting();
 		
 		DBManager db = new DBManager("GraphTesting");
-		
-		//graphByWayID(gt, db, 4258427);
+		/*
+		 *  Testing Ways
+		ArrayList<OSMEdge >wayGraph = graphByWayID(gt, db, 264454262);
+		double distance = 0.0;
+		for (int i = 0; i < wayGraph.size(); i++) {
+			distance = distance + wayGraph.get(i).getDistance();
+		}
+		System.out.println("WayGraph Distance: " + distance);
+		MapViewer mv = new MapViewer(wayGraph);
+		*/
 		
 		createFullGraph(gt, db);
 		
@@ -105,7 +113,7 @@ public class Main {
     	MapViewer mv = new MapViewer(pincerGraph);
     	*/
     	
-    	ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(5000, source, edgeGraph);
+    	ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(1000000, source, edgeGraph, nodeList.size());
     	//MapViewer mv = new MapViewer(randomGraph);
 		//Exporting Graph
 		try {
@@ -118,11 +126,11 @@ public class Main {
 	}//End createFullGraph
 	
 	//Creating a Graph with OSM Nodes grabbed using WayID (*TESTING*)
-	public static void graphByWayID(GraphTesting gt, DBManager db, long wayID) {
+	public static ArrayList<OSMEdge> graphByWayID(GraphTesting gt, DBManager db, long wayID) {
 		ArrayList<OSMNode> nodes = db.getNodesbyWayId(wayID);
 		ArrayList<OSMEdge> edges = new ArrayList<>();
 		for (int i = 0; i < nodes.size() -1; i++) {
-			System.out.println(nodes.get(i) + "/ " + nodes.get(i + 1) + " / " + (i - 1) + " / " + i);
+			//System.out.println(nodes.get(i) + "/ " + nodes.get(i + 1) + " / " + (i - 1) + " / " + i);
 			OSMEdge tempEdge = new OSMEdge(4258427, nodes.get(i), nodes.get(i + 1));
 			edges.add(tempEdge);
 			nodes.get(i).addEdge(tempEdge);
@@ -130,7 +138,7 @@ public class Main {
 		}//End for
 		
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
-		System.out.println(edgeGraph);
+		return edges;
 	}//End graphByWayID
 	
 	//Creating ways

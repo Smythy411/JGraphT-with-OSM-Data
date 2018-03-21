@@ -5,11 +5,16 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JFrame;
+import javax.swing.event.MouseInputListener;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleGraph;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;
+import org.jxmapviewer.input.CenterMapListener;
+import org.jxmapviewer.input.PanKeyListener;
+import org.jxmapviewer.input.PanMouseInputListener;
+import org.jxmapviewer.input.ZoomMouseWheelListenerCursor;
 import org.jxmapviewer.painter.CompoundPainter;
 import org.jxmapviewer.painter.Painter;
 import org.jxmapviewer.viewer.DefaultTileFactory;
@@ -45,8 +50,8 @@ public class MapViewer {
 		
 		drawRoute(waypoints, track);
 		    
-	     mapViewer.setZoom(4);
-	     mapViewer.setAddressLocation(geopoints.get(0));
+	    mapViewer.setZoom(4);
+	    mapViewer.setAddressLocation(geopoints.get(0));
 	}//End Constructor
 	
 	public MapViewer(OSMNode source) {
@@ -62,6 +67,7 @@ public class MapViewer {
     	
     	mapViewer.setZoom(4);
 	    mapViewer.setAddressLocation(geopoints.get(0));
+	    
 	}//End constructor
 	
 	public void updateMap(OSMEdge edge) {
@@ -90,6 +96,14 @@ public class MapViewer {
 	    frame.setSize(800, 600);
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.setVisible(true);
+	    
+        // Add interactions
+        MouseInputListener mia = new PanMouseInputListener(mapViewer);
+        mapViewer.addMouseListener(mia);
+        mapViewer.addMouseMotionListener(mia);
+        mapViewer.addMouseListener(new CenterMapListener(mapViewer));
+        mapViewer.addMouseWheelListener(new ZoomMouseWheelListenerCursor(mapViewer));
+        mapViewer.addKeyListener(new PanKeyListener(mapViewer));
 	}//End displayViewer()
 	
 	public void tileSetUp() {
