@@ -24,6 +24,7 @@ public class OSMWay {
 		this.name =passedName;
 		this.landuse = passedLanduse;
 		this.highway = passedHighway;
+		this.edges = new ArrayList<>();
 	}//End Constructor
 	
 	public OSMWay(long passedWayID, ArrayList<OSMNode> passedNodes) {

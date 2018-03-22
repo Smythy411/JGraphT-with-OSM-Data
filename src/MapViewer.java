@@ -76,6 +76,10 @@ public class MapViewer {
 		drawRoute(waypoints, track);
 	}
 	
+	public void reset() {
+		track.clear();;
+	}
+	
 	//Adds a node to the relevant painters
 	public void addToPainter(OSMNode node) {
 		GeoPosition geoP = new GeoPosition(Double.parseDouble(node.getLat()), Double.parseDouble((node.getLon())));

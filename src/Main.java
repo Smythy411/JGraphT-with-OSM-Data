@@ -12,6 +12,7 @@ import java.util.Set;
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.*;
 import org.jgrapht.io.CSVExporter;
 import org.jgrapht.io.CSVFormat;
@@ -96,13 +97,21 @@ public class Main {
 		//Creating ways
 		//ArrayList<OSMWay> ways = createWays(edges);
 		
+		ArrayList<OSMEdge> wayEdges = new ArrayList<>();
+		for (int i = 0; i < ways.size(); i++) {
+			if (ways.get(i).getHighway().equals("footway")) {
+				wayEdges.addAll(ways.get(i).getEdges());
+			}
+		}
+		Graph<OSMNode, OSMEdge> wayGraph = gt.createEdgeGraph(wayEdges);
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
+		OSMNode waysource = wayEdges.get(0).getSourceNode();
 		
 		  //Graph Traversal + Map Viewing
 		
 	    OSMEdge[] edgeSet = edgeGraph.edgeSet().toArray(new OSMEdge[edgeGraph.edgeSet().size()]);
 	    OSMNode source = edgeSet[0].getSourceNode();
-    	OSMNode target = edgeSet[0].getTargetNode();
+    	OSMNode target = edgeSet[edgeSet.length - 1].getTargetNode();
 		
     	/*
 		ArrayList<OSMEdge> subGraph = gt.constructSubGraph(false, 1, source, target, new ArrayList<OSMEdge>());
@@ -111,12 +120,21 @@ public class Main {
 		*/
     	
     	/*
-    	
-    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(100, source, edgeGraph);
-    	MapViewer mv = new MapViewer(pincerGraph);
+    	DijkstraShortestPath dj = new DijkstraShortestPath(edgeGraph);
+    	GraphPath<OSMNode, OSMEdge> gp = dj.getPath(source, target);
+    	System.out.println(gp.getWeight());
+    	List<OSMEdge> sp = gp.getEdgeList();
+    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
+    	spEdges.addAll(sp);
+    	MapViewer mv =  new MapViewer(spEdges);
     	*/
     	
-    	ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(1000000, source, edgeGraph, nodeList.size());
+    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, source, edgeGraph);
+    	//MapViewer mv = new MapViewer(pincerGraph);
+    	
+    	//MapViewer mv = new MapViewer(wayEdges);
+    	//ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(1000000, source, edgeGraph, nodeList.size());
+    	
     	//MapViewer mv = new MapViewer(randomGraph);
 		//Exporting Graph
 		try {
