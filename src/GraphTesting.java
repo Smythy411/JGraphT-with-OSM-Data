@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.jgrapht.*;
+import org.jgrapht.alg.scoring.Coreness;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.*;
 import org.jgrapht.traverse.ClosestFirstIterator;
@@ -124,6 +125,8 @@ public class GraphTesting {
 		constructedGraph.add(source);
 		int i = 0;
 		
+		Coreness<OSMNode, OSMEdge> core = new Coreness<OSMNode, OSMEdge>(graph);
+		
 		while (iterator.hasNext()) {
 			if (i >= size) {
 				break;
@@ -132,37 +135,47 @@ public class GraphTesting {
 				if (node.getVisited() == true) {
 					//System.out.println("Node already visited");
 				} else {
-					constructedGraph.add(node);
-					node.setVisited();
-					i++;
+					if (core.getVertexScore(node) == 1) {
+						//System.out.println("Dead End");
+					} else {
+						constructedGraph.add(node);
+						node.setVisited();
+						i++;
+					}
 				}//End inner if else
 			}//End outer if else
 			
 		}//End while
 		
 		double currentDist = 2.5;
+		Graph<OSMNode, OSMEdge> tempGraph = graph;
 		while (this.distance < 5.0) {
 			mv.reset();
 			currentDist = currentDist + 0.1;
 			
 			edges = constructWalk(i, currentDist, constructedGraph, mv);
 			
-	    	DijkstraShortestPath dj = new DijkstraShortestPath(graph);
+	    	DijkstraShortestPath dj = new DijkstraShortestPath(tempGraph);
 	    	GraphPath<OSMNode, OSMEdge> gp = dj.getPath(edges.get(edges.size() - 1).getTargetNode(), source);
-	    	List<OSMEdge> sp = gp.getEdgeList();
-	    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
-	    	spEdges.addAll(sp);
-	    	
-	    	for (int j = 0; j < spEdges.size(); j++) {
-				OSMEdge tempEdge = spEdges.get(j);
-				edges.add(tempEdge);
-				distance = distance + tempEdge.getDistance();
-				mv.updateMap(tempEdge);
+	    	if (gp.getLength() > 0) {
+		    	List<OSMEdge> sp = gp.getEdgeList();
+		    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
+		    	spEdges.addAll(sp);
+		    	
+		    	for (int j = 0; j < spEdges.size(); j++) {
+					OSMEdge tempEdge = spEdges.get(j);
+					edges.add(tempEdge);
+					distance = distance + tempEdge.getDistance();
+					mv.updateMap(tempEdge);
+		    	}
+	    	} else {
+	    		System.out.println("Dead End");
 	    	}
 	    	
-	    	System.out.println(this.distance);
+	    	//System.out.println("Full Distance: " + this.distance);
 		}
     	
+		System.out.println("Full Distance: " + this.distance);
 		return edges;
 	}//End constructPincerGraph
 	
@@ -192,8 +205,8 @@ public class GraphTesting {
 				break;
 			}//End if else
 		}//End outer for
-		System.out.println("Max disatance reached : " + distance);
-		System.out.println(edges.size() + " : " + constructedGraph.size());
+		//System.out.println("Depth-First Distance : " + distance);
+		//System.out.println(edges.size() + " : " + constructedGraph.size());
 		
 		return edges;
 	}//End constructWalk

@@ -99,18 +99,20 @@ public class Main {
 		
 		ArrayList<OSMEdge> wayEdges = new ArrayList<>();
 		for (int i = 0; i < ways.size(); i++) {
-			if (ways.get(i).getHighway().equals("footway")) {
+			if (ways.get(i).getHighway().equals("null") || ways.get(i).getHighway().equals("service")) {
+				
+			} else {
 				wayEdges.addAll(ways.get(i).getEdges());
 			}
 		}
 		Graph<OSMNode, OSMEdge> wayGraph = gt.createEdgeGraph(wayEdges);
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
-		OSMNode waysource = wayEdges.get(0).getSourceNode();
+		OSMNode waysource = wayEdges.get(500).getSourceNode();
 		
 		  //Graph Traversal + Map Viewing
 		
 	    OSMEdge[] edgeSet = edgeGraph.edgeSet().toArray(new OSMEdge[edgeGraph.edgeSet().size()]);
-	    OSMNode source = edgeSet[0].getSourceNode();
+	    OSMNode source = edgeSet[500].getSourceNode();
     	OSMNode target = edgeSet[edgeSet.length - 1].getTargetNode();
 		
     	/*
@@ -118,18 +120,9 @@ public class Main {
 		System.out.println(subGraph.size() + " : " + subGraph);
 		MapViewer mv = new MapViewer(subGraph);
 		*/
+
     	
-    	/*
-    	DijkstraShortestPath dj = new DijkstraShortestPath(edgeGraph);
-    	GraphPath<OSMNode, OSMEdge> gp = dj.getPath(source, target);
-    	System.out.println(gp.getWeight());
-    	List<OSMEdge> sp = gp.getEdgeList();
-    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
-    	spEdges.addAll(sp);
-    	MapViewer mv =  new MapViewer(spEdges);
-    	*/
-    	
-    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, source, edgeGraph);
+    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, waysource, wayGraph);
     	//MapViewer mv = new MapViewer(pincerGraph);
     	
     	//MapViewer mv = new MapViewer(wayEdges);
