@@ -205,7 +205,7 @@ public class GraphTesting {
 				break;
 			}//End if else
 		}//End outer for
-		//System.out.println("Depth-First Distance : " + distance);
+		System.out.println("Depth-First Distance : " + distance);
 		//System.out.println(edges.size() + " : " + constructedGraph.size());
 		
 		return edges;

@@ -33,7 +33,7 @@ public class FileManager {
         this.csvFile = cFile;
         this.osmFile = oFile;
 
-        db = new DBManager("GraphTesting");
+        db = new DBManager("drfr-dublin");
     }//End FileHandler constructor
 
     //Parses data from CSVFile (Nodes)
@@ -124,7 +124,7 @@ public class FileManager {
     		} else if (currentNode.getName() == "tag") {
     			String tagRef = currentNode.valueOf("@k");
     			String value = currentNode.valueOf("@v");
-    			System.out.println(tagRef + " : " + value);
+    			//System.out.println(tagRef + " : " + value);
     			if (tagRef.equals("landuse")) {
     				landuse = value;
     			}else if (tagRef.equals("highway")) {
@@ -133,8 +133,8 @@ public class FileManager {
     				int indexOf = value.indexOf('\'');
     				if (indexOf != -1) {
     					System.out.println("REGEX");
-    					value = value.replaceFirst("\'", "");
-    				}
+    					value = value.replaceAll("\'", "");
+    				}//End if 
     				name = value;
     			}//End inner if else
     		}//End outer if else

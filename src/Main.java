@@ -32,31 +32,23 @@ public class Main {
         
 		GraphTesting gt = new GraphTesting();
 		
-		DBManager db = new DBManager("GraphTesting");
-		/*
-		 *  Testing Ways
-		ArrayList<OSMEdge >wayGraph = graphByWayID(gt, db, 264454262);
-		double distance = 0.0;
-		for (int i = 0; i < wayGraph.size(); i++) {
-			distance = distance + wayGraph.get(i).getDistance();
-		}
-		System.out.println("WayGraph Distance: " + distance);
-		MapViewer mv = new MapViewer(wayGraph);
-		*/
+		DBManager db = new DBManager("drfr-dublin");
 		
 		createFullGraph(gt, db);
 		
 		//Closing Database
 		db.close();
+		
 	}//End main()
 	
 	//Sets up the postgres database by creating the tables and tests with simple data
 	public static void databaseSetUp() {
-		DBManager db = new DBManager("GraphTesting");
+		DBManager db = new DBManager("drfr-dublin");
 		
 		db.createNodeTable();
 		db.createWayTable();
 		db.createEdgeTable();
+		db.createWaysTable();
 		
 		/*
 		db.insert("waylist", new String[] {"2", "124", "12346"});
@@ -68,7 +60,7 @@ public class Main {
 	
 	//Parses data from files and inserts it into the database
 	public static void dataSetUp() {
-		FileManager fm = new FileManager("resources/UseCaseNodes.csv", "resources/UseCaseWays.osm");
+		FileManager fm = new FileManager("resources/dublinNodes.csv", "resources/dublinWays.osm");
 		//fm.openCSVFile();
 		fm.parseXml();
 	}//End dataSetUp()
@@ -88,8 +80,10 @@ public class Main {
 	
 	//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
 	public static void createFullGraph(GraphTesting gt, DBManager db) {
-		ArrayList<OSMNode> nodeList = db.getNodes();
-		ArrayList<OSMEdge> edges = db.getEdges(nodeList);
+		ArrayList<OSMNode> nodeList = db.getNodesByBoundary("53.2745", "-6.3553", "53.2897", "-6.3302");
+		System.out.println(nodeList.size());
+		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeList, "53.2745", "-6.3553", "53.2897", "-6.3302");
+		System.out.println(edges.size());
 		ArrayList<OSMWay> ways = db.getWays(nodeList, edges);
 		
 		System.out.println(ways.size());

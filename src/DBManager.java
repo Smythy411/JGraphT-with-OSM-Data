@@ -45,8 +45,8 @@ public class DBManager {
 		   String sql = "CREATE TABLE NODELIST " +
 		      "(ID SERIAL PRIMARY KEY NOT NULL," +
 		      " nodeID BIGINT UNIQUE NOT NULL," +
-		      " lon varchar(50) NOT NULL," +
-		      " lat varchar(50) NOT NULL);";
+		      " lon DOUBLE PRECISION NOT NULL," +
+		      " lat DOUBLE PRECISION NOT NULL);";
 		   System.out.println(sql);
 		   stmt.executeUpdate(sql);
 		   stmt.close();
@@ -104,7 +104,7 @@ public class DBManager {
 		   Statement stmt = c.createStatement();
 		   String sql = "CREATE TABLE EDGELIST " +
 		      "(edgeID BIGINT PRIMARY KEY NOT NULL," +
-		      " wayID BIGINT NOTNULL, " +
+		      " wayID BIGINT NOT NULL, " +
 		      " sourceNode BIGINT NOT NULL," +
 		      " targetNode BIGINT NOT NULL," +
 		      " foreign key (wayID) references WayList(wayId), " +
@@ -146,7 +146,7 @@ public class DBManager {
 		   } else if (table == "ways") {
 			   sql = "INSERT INTO WAYS " +
 					   "VALUES(" + values[0] + ", '" + values[1] + "', '" + values[2] + "', '" + values[3]  +"', '" + values[4] + "');";
-			   System.out.println(sql);
+			   //System.out.println(sql);
 		   }else {
 			   System.out.println("Invalid table name");
 			   System.exit(0);
@@ -155,7 +155,7 @@ public class DBManager {
 		   stmt.close();
 		   c.commit();
 		   
-		   System.out.println("Insert Successful");
+		   //System.out.println("Insert Successful");
 	   }catch ( Exception e ) {
 		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
 		   System.exit(0);
@@ -178,8 +178,8 @@ public class DBManager {
 		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist WHERE id = " + id + ";");
 		  while(rs.next()) {
 			  node.setNodeID(rs.getLong("nodeID"));
-			  node.setLat(rs.getString("lat"));
-			  node.setLon(rs.getString("lon"));
+			  node.setLat(String.valueOf(rs.getBigDecimal("lat")));
+			  node.setLon(String.valueOf(rs.getBigDecimal("lon")));
 		  }//End while
 		  rs.close();
 		  stmt.close();
@@ -197,8 +197,8 @@ public class DBManager {
 		  Statement stmt = c.createStatement();
 		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist WHERE nodeID = " + nodeID + ";");
 		  while(rs.next()) {
-			  node.setLat(rs.getString("lat"));
-			  node.setLon(rs.getString("lon"));
+			  node.setLat(String.valueOf(rs.getBigDecimal("lat")));
+			  node.setLon(String.valueOf(rs.getBigDecimal("lon")));
 		  }//End while
 		  rs.close();
 		  stmt.close();
@@ -216,7 +216,7 @@ public class DBManager {
 		  Statement stmt = c.createStatement();
 		  ResultSet rs = stmt.executeQuery("SELECT nodeID, lat, lon FROM nodelist;");
 		  while(rs.next()) {
-			  OSMNode node = new OSMNode(rs.getLong("nodeID"), rs.getString("lat"), rs.getString("lon"));
+			  OSMNode node = new OSMNode(rs.getLong("nodeID"), String.valueOf(rs.getBigDecimal("lat")), String.valueOf(rs.getBigDecimal("lon")));
 			  nodes.add(node);
 		  }//End while
 		   rs.close();
@@ -227,6 +227,28 @@ public class DBManager {
 	   }//End try catch
 	   return nodes;
    }//End getNodes
+   
+   public ArrayList<OSMNode> getNodesByBoundary(String x1, String y1, String x2, String y2) {
+	   ArrayList<OSMNode> nodes = new ArrayList<>();
+	   
+	   try {
+		  Statement stmt = c.createStatement();
+		  String query = "SELECT nodeID, lat, lon FROM nodelist WHERE lat BETWEEN " +
+				  x1 + " AND " + x2 + " AND lon BETWEEN " + y1 + " AND " + y2 + ";";
+		  System.out.println(query);
+		  ResultSet rs = stmt.executeQuery(query);
+		  while(rs.next()) {
+			  OSMNode node = new OSMNode(rs.getLong("nodeID"), String.valueOf(rs.getBigDecimal("lat")), String.valueOf(rs.getBigDecimal("lon")));
+			  nodes.add(node);
+		  }//End while
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return nodes;
+   }//End getNodesByBoundary
    
    /*
     * 		WayList
@@ -294,7 +316,50 @@ public class DBManager {
 		   System.exit(0);
 	   }//End try catch
 	   return ways;
-   }
+   }//End getWays
+   
+   public ArrayList<OSMWay> getWaysByBoundary(ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
+	   ArrayList<OSMWay> ways = new ArrayList<>();
+	   try {
+		   Statement stmt = c.createStatement();
+		   for(int j = 0; j < passedEdges.size(); j++) {
+			   Long wayID = passedEdges.get(0).getWayID();
+			   ResultSet rs = stmt.executeQuery("SELECT * FROM ways WHERE wayid = " + wayID +";");
+			   while(rs.next()) {
+				   ArrayList<OSMNode> tempNodes = new ArrayList<>();
+				   ArrayList<OSMEdge> tempEdges = new ArrayList<>();
+					for (int i = 0; i < passedEdges.size(); i++) {
+						long tempWID = passedEdges.get(i).getWayID();	
+						if (wayID == tempWID) {
+							tempEdges.add(passedEdges.get(i));
+							tempNodes.add(passedEdges.get(i).getTargetNode());
+						}//end if
+					}//end for
+				   /*
+				   Array z = rs.getArray("nodes");
+				   String[] nds = (String[])z.getArray();
+				   */
+				   String name = rs.getString("name");
+				   String landuse = rs.getString("landuse");
+				   String highway = rs.getString("highway");
+				   if (tempEdges.size() <= 0) {
+					   OSMWay way = new OSMWay(wayID, name, landuse, highway);
+					   ways.add(way);
+				   } else {
+					   OSMWay way = new OSMWay(wayID, tempNodes, tempEdges, name, landuse, highway);
+					   ways.add(way);
+				   }//End if else
+			   }//End while
+			   
+			   rs.close();
+		   }
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return ways;
+   }//End getWays
    
    /*
     * 		EdgeList
@@ -337,6 +402,45 @@ public class DBManager {
 	   }//End try catch
 	   return edges;
    }//End getEdges
+   
+   public ArrayList<OSMEdge> getEdgesByBoundary(ArrayList<OSMNode> nodes, String x1, String y1, String x2, String y2) {
+	   ArrayList<OSMEdge> edges = new ArrayList<>();
+	   
+	   try {
+		   Statement stmt = c.createStatement();
+		   String query = "SELECT * FROM nodelist INNER JOIN " +
+				   	"edgelist ON nodelist.nodeid = edgelist.sourcenode WHERE lat BETWEEN " +
+					  x1 + " AND " + x2 + " AND lon BETWEEN " + y1 + " AND " + y2 + ";";
+		   System.out.println(query);
+		   ResultSet rs = stmt.executeQuery(query);
+		   while (rs.next()) {
+			   OSMNode sourceNode = null, targetNode = null;
+			   for (int i = 0; i < nodes.size(); i++) {
+				   OSMNode node = nodes.get(i);
+				   if (node.getNodeID() == rs.getLong("targetNode")) {
+					   targetNode = node;
+				   }
+				   if (node.getNodeID() == rs.getLong("sourceNode") ) {
+					   sourceNode = node; 
+				   }
+			   }//End for
+			   if (sourceNode == targetNode || targetNode == null) {
+				  // System.out.println("Loops not allowed and/or node may not be within boundary");
+			   } else {
+				   OSMEdge edge = new OSMEdge(rs.getLong("edgeID"), rs.getLong("wayID"), sourceNode, targetNode);
+				   sourceNode.addEdge(edge);
+				   targetNode.addEdge(edge);
+				   edges.add(edge);
+			   }
+		   }
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return edges;
+   }//End getEdgesByBoundary
    
    //Gets the wayID for a relevant Edge.
    public long getWayIdByEdge(long source, long target) {
@@ -386,7 +490,7 @@ public class DBManager {
 	        			 param + " = " + value + ";");
 	        	 while (rs.next()) {
 		    		 long result = rs.getLong(param);
-		    		 System.out.println(param + " = " + result);
+		    		 //System.out.println(param + " = " + result);
 		    		 found = true;
 	        	 }//End while
 	    		 rs.close();
