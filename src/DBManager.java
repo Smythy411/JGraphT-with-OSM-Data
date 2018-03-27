@@ -318,41 +318,46 @@ public class DBManager {
 	   return ways;
    }//End getWays
    
-   public ArrayList<OSMWay> getWaysByBoundary(ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges) {
+   //SELECT COUNT(DISTINCT ways.wayid, highway, name, landuse) FROM ways INNER JOIN edgelist ON ways.wayid = edgelist.wayid INNER JOIN nodelist ON nodelist.nodeid = edgelist.sourcenode WHERE lat BETWEEN 53.2745 AND 53.2897 AND lon BETWEEN -6.3553 AND -6.3302;
+   public ArrayList<OSMWay> getWaysByBoundary(ArrayList<OSMNode> passedNodes, ArrayList<OSMEdge> passedEdges, String x1, String y1, String x2, String y2) {
 	   ArrayList<OSMWay> ways = new ArrayList<>();
+	   
 	   try {
 		   Statement stmt = c.createStatement();
-		   for(int j = 0; j < passedEdges.size(); j++) {
-			   Long wayID = passedEdges.get(0).getWayID();
-			   ResultSet rs = stmt.executeQuery("SELECT * FROM ways WHERE wayid = " + wayID +";");
-			   while(rs.next()) {
-				   ArrayList<OSMNode> tempNodes = new ArrayList<>();
-				   ArrayList<OSMEdge> tempEdges = new ArrayList<>();
-					for (int i = 0; i < passedEdges.size(); i++) {
-						long tempWID = passedEdges.get(i).getWayID();	
-						if (wayID == tempWID) {
-							tempEdges.add(passedEdges.get(i));
-							tempNodes.add(passedEdges.get(i).getTargetNode());
-						}//end if
-					}//end for
-				   /*
-				   Array z = rs.getArray("nodes");
-				   String[] nds = (String[])z.getArray();
-				   */
-				   String name = rs.getString("name");
-				   String landuse = rs.getString("landuse");
-				   String highway = rs.getString("highway");
-				   if (tempEdges.size() <= 0) {
-					   OSMWay way = new OSMWay(wayID, name, landuse, highway);
-					   ways.add(way);
-				   } else {
-					   OSMWay way = new OSMWay(wayID, tempNodes, tempEdges, name, landuse, highway);
-					   ways.add(way);
-				   }//End if else
-			   }//End while
-			   
-			   rs.close();
-		   }
+		   String query = "SELECT DISTINCT ways.wayid, nodes, highway, name, landuse FROM ways " +
+		   	"INNER JOIN edgelist ON ways.wayid = edgelist.wayid " +
+		   	"INNER JOIN nodelist ON nodelist.nodeid = edgelist.sourcenode " +
+		   	"WHERE lat BETWEEN " + x1 + " AND " + x2 + " AND lon BETWEEN " + y1 + " AND " + y2 + ";";
+		   System.out.println(query);
+		   ResultSet rs = stmt.executeQuery(query);
+		   while(rs.next()) {
+			   long wayID = rs.getLong("wayid");
+			   ArrayList<OSMNode> tempNodes = new ArrayList<>();
+			   ArrayList<OSMEdge> tempEdges = new ArrayList<>();
+				for (int i = 0; i < passedEdges.size(); i++) {
+					long tempWID = passedEdges.get(i).getWayID();	
+					if (wayID == tempWID) {
+						tempEdges.add(passedEdges.get(i));
+						tempNodes.add(passedEdges.get(i).getTargetNode());
+					}//end if
+				}//end for
+			   /*
+			   Array z = rs.getArray("nodes");
+			   String[] nds = (String[])z.getArray();
+			   */
+			   String name = rs.getString("name");
+			   String landuse = rs.getString("landuse");
+			   String highway = rs.getString("highway");
+			   if (tempEdges.size() <= 0) {
+				   OSMWay way = new OSMWay(wayID, name, landuse, highway);
+				   ways.add(way);
+			   } else {
+				   OSMWay way = new OSMWay(wayID, tempNodes, tempEdges, name, landuse, highway);
+				   ways.add(way);
+			   }//End if else
+		   }//End while
+		   
+		   rs.close();
 		   stmt.close();
 	   }catch ( Exception e ) {
 		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );

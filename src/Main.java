@@ -84,48 +84,46 @@ public class Main {
 		System.out.println(nodeList.size());
 		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeList, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(edges.size());
-		ArrayList<OSMWay> ways = db.getWays(nodeList, edges);
-		
+		ArrayList<OSMWay> ways = db.getWaysByBoundary(nodeList, edges, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(ways.size());
-		
-		//Creating ways
-		//ArrayList<OSMWay> ways = createWays(edges);
 		
 		ArrayList<OSMEdge> wayEdges = new ArrayList<>();
 		for (int i = 0; i < ways.size(); i++) {
-			if (ways.get(i).getHighway().equals("null") || ways.get(i).getHighway().equals("service")) {
+			if (ways.get(i).getHighway().equals("null") || ways.get(i).getHighway().equals("service") || 
+					ways.get(i).getHighway().equals("primary") || ways.get(i).getHighway().equals("residential")) {
 				
 			} else {
 				wayEdges.addAll(ways.get(i).getEdges());
 			}
 		}
 		Graph<OSMNode, OSMEdge> wayGraph = gt.createEdgeGraph(wayEdges);
-		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 		OSMNode waysource = wayEdges.get(500).getSourceNode();
 		
 		  //Graph Traversal + Map Viewing
-		
+    	
+    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, waysource, wayGraph);
+    	//MapViewer mv = new MapViewer(pincerGraph);
+    	
+		/*	Testing
+		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 	    OSMEdge[] edgeSet = edgeGraph.edgeSet().toArray(new OSMEdge[edgeGraph.edgeSet().size()]);
 	    OSMNode source = edgeSet[500].getSourceNode();
     	OSMNode target = edgeSet[edgeSet.length - 1].getTargetNode();
 		
-    	/*
+    	
 		ArrayList<OSMEdge> subGraph = gt.constructSubGraph(false, 1, source, target, new ArrayList<OSMEdge>());
 		System.out.println(subGraph.size() + " : " + subGraph);
 		MapViewer mv = new MapViewer(subGraph);
-		*/
-
-    	
-    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, waysource, wayGraph);
-    	//MapViewer mv = new MapViewer(pincerGraph);
     	
     	//MapViewer mv = new MapViewer(wayEdges);
     	//ArrayList<OSMEdge> randomGraph = gt.constructRandomWalk(1000000, source, edgeGraph, nodeList.size());
     	
     	//MapViewer mv = new MapViewer(randomGraph);
+    	  */
+    	
 		//Exporting Graph
 		try {
-			exportGraph(edgeGraph);
+			exportGraph(wayGraph);
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
