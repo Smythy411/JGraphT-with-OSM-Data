@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.scoring.Coreness;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.*;
@@ -148,7 +149,6 @@ public class GraphTesting {
 		}//End while
 		
 		double currentDist = 2.5;
-		Graph<OSMNode, OSMEdge> tempGraph = graph;
 		while (this.distance < 5.0) {
 			if (currentDist == 5.0) {
 				break;
@@ -158,9 +158,14 @@ public class GraphTesting {
 			
 			edges = constructWalk(i, currentDist, constructedGraph, mv);
 			
-	    	DijkstraShortestPath dj = new DijkstraShortestPath(tempGraph);
+			if (isPath(graph, edges, source) ==  true) {
+				graph.removeAllEdges(edges);
+			}
+			
+			
+	    	DijkstraShortestPath dj = new DijkstraShortestPath(graph);
 	    	GraphPath<OSMNode, OSMEdge> gp = dj.getPath(edges.get(edges.size() - 1).getTargetNode(), source);
-	    	if (gp.getLength() > 0) {
+	    	if (gp != null) {
 		    	List<OSMEdge> sp = gp.getEdgeList();
 		    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
 		    	spEdges.addAll(sp);
@@ -181,6 +186,18 @@ public class GraphTesting {
 		System.out.println("Full Distance: " + this.distance);
 		return edges;
 	}//End constructPincerGraph
+	
+	public boolean isPath(Graph<OSMNode, OSMEdge> graph, ArrayList<OSMEdge> edges, OSMNode source) {
+		Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph(graph);
+		tempGraph.removeAllEdges(edges);
+		
+    	DijkstraShortestPath dj = new DijkstraShortestPath(tempGraph);
+    	if (dj.getPath(edges.get(edges.size() - 1).getTargetNode(), source) != null) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+	}
 	
 	public ArrayList<OSMEdge> constructWalk(int i, double targetDistance, ArrayList<OSMNode> constructedGraph, MapViewer mv) {
 		ArrayList<OSMEdge> edges = new ArrayList<>();

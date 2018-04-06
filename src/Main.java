@@ -119,7 +119,6 @@ public class Main {
 						closestNode = checkNode;
 					}
 				}
-				
 			}
 		}
 		System.out.println("Closest Node is " + closestNode.getLat() + ", " + closestNode.getLon() + " which is " + closestDistance + " from current Location");
