@@ -159,6 +159,7 @@ public class GraphTesting {
 			edges = constructWalk(i, currentDist, constructedGraph, mv);
 			
 			if (isPath(graph, edges, source) ==  true) {
+				System.out.println("Removing");
 				graph.removeAllEdges(edges);
 			}
 			

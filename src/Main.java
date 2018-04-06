@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.*;
@@ -128,9 +129,53 @@ public class Main {
 		OSMNode waysource = wayEdges.get(0).getSourceNode();
 		
 		  //Graph Traversal + Map Viewing
-    	
-    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, closestNode, wayGraph);
-    	//MapViewer mv = new MapViewer(pincerGraph);
+		DijkstraShortestPath dj = new DijkstraShortestPath(wayGraph);
+		ShortestPathAlgorithm.SingleSourcePaths paths = dj.getPaths(closestNode);
+		System.out.println(paths);
+		ArrayList<GraphPath> validPaths = new ArrayList<GraphPath>();
+		ArrayList<GraphPath> validPathsHome = new ArrayList<GraphPath>();
+		ArrayList<OSMEdge> deadEnd = new ArrayList<OSMEdge>();
+		for (int i = 0; i < wayEdges.size(); i++) {
+			double weight = paths.getWeight(wayEdges.get(i).getTargetNode());
+			if (weight > 1.0 && weight !=  Double.POSITIVE_INFINITY) {
+				GraphPath path = paths.getPath(wayEdges.get(i).getTargetNode());
+				
+				Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph(wayGraph);
+				List<OSMEdge> list = path.getEdgeList();
+				tempGraph.removeAllEdges(list);
+				boolean pathFound = false;
+				
+				int k = list.size() - 1;
+				while (pathFound == false) {
+					DijkstraShortestPath dj2 = new DijkstraShortestPath(tempGraph);
+					GraphPath pathHome = dj2.getPath(path.getEndVertex(), closestNode);
+					if (pathHome != null) {
+						OSMEdge tempEdge = list.get(k);
+						deadEnd.add(tempEdge);
+						System.out.println(i + ": " + weight + " : " + k);
+						validPaths.add(path);
+						validPathsHome.add(pathHome);
+						pathFound = true;
+					} else {
+						OSMEdge tempEdge = list.get(k);
+						tempGraph.addEdge(tempEdge.getSourceNode(), tempEdge.getTargetNode());
+						deadEnd.add(tempEdge);
+						k--;
+					}
+				}
+				break;
+			}
+		}
+		List<OSMEdge> path = validPaths.get(0).getEdgeList();
+		path.removeAll(deadEnd);
+		List<OSMEdge> pathHome = validPathsHome.get(0).getEdgeList();
+		pathHome.removeAll(deadEnd);
+		System.out.println(validPaths.get(0).getWeight() + validPathsHome.get(0).getWeight());
+    	ArrayList<OSMEdge> spEdges =  new ArrayList<>();
+    	spEdges.addAll(path);
+    	spEdges.addAll(pathHome);
+    	//ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(2000, closestNode, wayGraph);
+    	MapViewer mv = new MapViewer(spEdges);
     	
 		/*	Testing
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
