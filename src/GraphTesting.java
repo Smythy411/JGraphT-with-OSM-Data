@@ -135,7 +135,7 @@ public class GraphTesting {
 				if (node.getVisited() == true) {
 					//System.out.println("Node already visited");
 				} else {
-					if (core.getVertexScore(node) == 1) {
+					if (core.getVertexScore(node) == 0 || core.getVertexScore(node) == 1) {
 						//System.out.println("Dead End");
 					} else {
 						constructedGraph.add(node);
@@ -150,6 +150,9 @@ public class GraphTesting {
 		double currentDist = 2.5;
 		Graph<OSMNode, OSMEdge> tempGraph = graph;
 		while (this.distance < 5.0) {
+			if (currentDist == 5.0) {
+				break;
+			}
 			mv.reset();
 			currentDist = currentDist + 0.1;
 			

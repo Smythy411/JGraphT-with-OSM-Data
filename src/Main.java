@@ -87,21 +87,50 @@ public class Main {
 		ArrayList<OSMWay> ways = db.getWaysByBoundary(nodeList, edges, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(ways.size());
 		
+		double sourceLat = 53.279;
+		double sourceLon = -6.346;
+		
+		OSMNode closestNode = new OSMNode();
+		double closestDistance = 0.5;
+		
 		ArrayList<OSMEdge> wayEdges = new ArrayList<>();
+		System.out.println("Finding Closest Node");
 		for (int i = 0; i < ways.size(); i++) {
 			if (ways.get(i).getHighway().equals("null") || ways.get(i).getHighway().equals("service") || 
-					ways.get(i).getHighway().equals("primary") || ways.get(i).getHighway().equals("residential")) {
+					ways.get(i).getHighway().equals("primary")) {
 				
 			} else {
-				wayEdges.addAll(ways.get(i).getEdges());
+				ArrayList<OSMEdge> edgesToAdd = ways.get(i).getEdges();
+				wayEdges.addAll(edgesToAdd);
+				
+				for (int j = 0; j < edgesToAdd.size(); j++) {
+					if (j == 0) {
+						OSMNode firstNode = edgesToAdd.get(j).getSourceNode();
+						double checkDistance = Haversine.distance(sourceLat, sourceLon, Double.parseDouble(firstNode.getLat()), Double.parseDouble(firstNode.getLon()));
+						if (checkDistance < closestDistance) {
+							closestDistance = checkDistance;
+							closestNode = firstNode;
+						}
+					}
+					OSMNode checkNode = edgesToAdd.get(j).getTargetNode();
+					double checkDistance = Haversine.distance(sourceLat, sourceLon, Double.parseDouble(checkNode.getLat()), Double.parseDouble(checkNode.getLon()));
+					if (checkDistance < closestDistance) {
+						closestDistance = checkDistance;
+						closestNode = checkNode;
+					}
+				}
+				
 			}
 		}
+		System.out.println("Closest Node is " + closestNode.getLat() + ", " + closestNode.getLon() + " which is " + closestDistance + " from current Location");
+		
+		
 		Graph<OSMNode, OSMEdge> wayGraph = gt.createEdgeGraph(wayEdges);
-		OSMNode waysource = wayEdges.get(500).getSourceNode();
+		OSMNode waysource = wayEdges.get(0).getSourceNode();
 		
 		  //Graph Traversal + Map Viewing
     	
-    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, waysource, wayGraph);
+    	ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(1000, closestNode, wayGraph);
     	//MapViewer mv = new MapViewer(pincerGraph);
     	
 		/*	Testing

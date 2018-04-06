@@ -364,7 +364,7 @@ public class DBManager {
 		   System.exit(0);
 	   }//End try catch
 	   return ways;
-   }//End getWays
+   }//End getWaysByBoundary
    
    /*
     * 		EdgeList
