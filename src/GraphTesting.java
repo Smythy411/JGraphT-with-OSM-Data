@@ -232,6 +232,93 @@ public class GraphTesting {
 		return edges;
 	}//End constructWalk
 	
+	public ArrayList<OSMEdge> constructDJKRoute(Graph<OSMNode, OSMEdge> wayGraph, OSMEdge[] wayEdges, OSMNode closestNode) {
+		ArrayList<OSMEdge> edges = new ArrayList<OSMEdge>();
+		DijkstraShortestPath dj = new DijkstraShortestPath(wayGraph);
+		ShortestPathAlgorithm.SingleSourcePaths<OSMNode, OSMEdge> paths = dj.getPaths(closestNode);
+		ArrayList<GraphPath> validPaths = new ArrayList<GraphPath>();
+		ArrayList<GraphPath> validPathsHome = new ArrayList<GraphPath>();
+		ArrayList<OSMEdge> deadEnd = new ArrayList<OSMEdge>();
+		for (int i = 0; i < wayEdges.length; i++) {
+			double weight = paths.getWeight(wayEdges[i].getTargetNode());
+			if (weight > 1.25 && weight !=  Double.POSITIVE_INFINITY) {
+				GraphPath path = paths.getPath(wayEdges[i].getTargetNode());
+				
+				Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph(wayGraph);
+				List<OSMEdge> list = path.getEdgeList();
+				tempGraph.removeAllEdges(list);
+				boolean pathFound = false;
+				
+				int k = list.size() - 1;
+				while (pathFound == false) {
+					DijkstraShortestPath dj2 = new DijkstraShortestPath(tempGraph);
+					GraphPath pathHome = dj2.getPath(path.getEndVertex(), closestNode);
+					if (pathHome != null) {
+						OSMEdge tempEdge = list.get(k);
+						deadEnd.add(tempEdge);
+						//System.out.println(i + ": " + weight + " : " + k);
+						validPaths.add(path);
+						validPathsHome.add(pathHome);
+						pathFound = true;
+					} else {
+						OSMEdge tempEdge = list.get(k);
+						tempGraph.addEdge(tempEdge.getSourceNode(), tempEdge.getTargetNode());
+						deadEnd.add(tempEdge);
+						k--;
+					}
+				}
+				//break;
+			}
+		}
+		
+		List<OSMEdge> path = validPaths.get(0).getEdgeList();
+		path.removeAll(deadEnd);
+		List<OSMEdge> pathHome = validPathsHome.get(0).getEdgeList();
+		pathHome.removeAll(deadEnd);
+		
+		//Dead Ends need to be removed properly...
+		double closestRoute = validPaths.get(0).getWeight() + validPathsHome.get(0).getWeight();
+		double routeOffset = 0.0;
+		if (closestRoute < 5) {
+			routeOffset = 5 - closestRoute;
+		} else {
+			routeOffset = closestRoute - 5;
+		}
+		
+		int crIndex = 0;
+		for (int i = 0; i < validPaths.size(); i++) {
+			closestRoute = validPaths.get(i).getWeight() + validPathsHome.get(i).getWeight();
+			if (closestRoute <= 4 || closestRoute >= 6) {
+				
+			} else {
+				if (closestRoute < 5) {
+					if ((5 - closestRoute) < routeOffset) {
+						routeOffset = 5 - closestRoute;
+						System.out.println("Route Offset: " + routeOffset);
+						crIndex = i;
+					}
+				} else {
+					if ((closestRoute - 5) < routeOffset) {
+						routeOffset = closestRoute - 5;
+						System.out.println("Route Offset: " + routeOffset);
+						crIndex = i;
+					}
+				}
+			}
+			
+		}
+		List<OSMEdge> path2 = validPaths.get(crIndex).getEdgeList();
+		path.removeAll(deadEnd);
+		List<OSMEdge> pathHome2 = validPathsHome.get(0).getEdgeList();
+		pathHome.removeAll(deadEnd);
+    	edges.addAll(path2);
+    	edges.addAll(pathHome2);
+    	
+    	System.out.println(validPaths.get(crIndex).getWeight() + validPathsHome.get(crIndex).getWeight());
+    	
+		return edges;
+	}
+	
 	public ArrayList<OSMEdge> constructSubGraph(boolean finished, int size, OSMNode source, OSMNode target, ArrayList<OSMEdge> full) {
 		if (finished) {
 			return full;
