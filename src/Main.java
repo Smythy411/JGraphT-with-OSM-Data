@@ -130,7 +130,7 @@ public class Main {
 		
 		  //Graph Traversal + Map Viewing
 		OSMEdge[] wayEdgeSet = wayGraph.edgeSet().toArray(new OSMEdge[wayGraph.edgeSet().size()]);
-		ArrayList<OSMEdge> DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode);
+		ArrayList<OSMEdge> DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 5.0);
     	//ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(2000, closestNode, wayGraph);
     	MapViewer mv = new MapViewer(DJKRoute);
     	
