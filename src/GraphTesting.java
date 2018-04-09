@@ -361,10 +361,11 @@ public class GraphTesting {
 			coreness = false;
 		}//end if else
 		
-		Route route = new Route();
+		
 		for (int i = 0; i < wayEdges.length; i++) {
 			double weight = paths.getWeight(wayEdges[i].getTargetNode());
 			if (weight > (distance / 4) && weight !=  Double.POSITIVE_INFINITY && weight < distance) {
+				Route route = new Route();
 				GraphPath<OSMNode, OSMEdge> path = paths.getPath(wayEdges[i].getSourceNode());
 				
 				Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph<OSMNode, OSMEdge>(wayGraph);
@@ -402,8 +403,8 @@ public class GraphTesting {
 						route.removeFromRoute(tempDeadEnd);
 						
 						double currentRouteWeight = route.getWeight();
-						
-						if (currentRouteWeight <= distance + 0.5 || currentRouteWeight >= distance - 0.5) {
+						System.out.println((distance + 0.5) + " -> " + (distance - 0.5) + " : " + currentRouteWeight);
+						if (currentRouteWeight <= (distance + 0.5) && currentRouteWeight >= (distance - 0.5)) {
 							System.out.println(currentRouteWeight);
 							return route;
 						} else {
