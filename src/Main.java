@@ -6,7 +6,9 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.*;
@@ -83,8 +85,15 @@ public class Main {
 	public static void createFullGraph(GraphTesting gt, DBManager db) {
 		ArrayList<OSMNode> nodeList = db.getNodesByBoundary("53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(nodeList.size());
-		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeList, "53.2745", "-6.3553", "53.2897", "-6.3302");
+		Map<Long, OSMNode> nodeMap = new HashMap<Long, OSMNode>();
+		for (int i = 0; i < nodeList.size(); i++) {
+			OSMNode node = nodeList.get(i);
+			nodeMap.put(node.getNodeID(), node);
+		}
+		
+		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeMap, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(edges.size());
+		
 		ArrayList<OSMWay> ways = db.getWaysByBoundary(nodeList, edges, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(ways.size());
 		
@@ -130,7 +139,7 @@ public class Main {
 		
 		  //Graph Traversal + Map Viewing
 		OSMEdge[] wayEdgeSet = wayGraph.edgeSet().toArray(new OSMEdge[wayGraph.edgeSet().size()]);
-		Route DJKRoute = gt.constructQuickDJKRoute(wayGraph, wayEdgeSet, closestNode, 2.0);
+		Route DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 5.0);
     	//ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(2000, closestNode, wayGraph);
 		System.out.println(DJKRoute.getRoute().size());
     	MapViewer mv = new MapViewer(DJKRoute.getRoute());

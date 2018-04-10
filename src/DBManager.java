@@ -7,6 +7,8 @@ import java.sql.DriverManager;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.sql.ResultSet;
 
 public class DBManager {
@@ -429,6 +431,37 @@ public class DBManager {
 					   sourceNode = node; 
 				   }
 			   }//End for
+			   if (sourceNode == targetNode || targetNode == null) {
+				  // System.out.println("Loops not allowed and/or node may not be within boundary");
+			   } else {
+				   OSMEdge edge = new OSMEdge(rs.getLong("edgeID"), rs.getLong("wayID"), sourceNode, targetNode);
+				   sourceNode.addEdge(edge);
+				   targetNode.addEdge(edge);
+				   edges.add(edge);
+			   }
+		   }
+		   rs.close();
+		   stmt.close();
+	   }catch ( Exception e ) {
+		   System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+		   System.exit(0);
+	   }//End try catch
+	   return edges;
+   }//End getEdgesByBoundary
+   
+   public ArrayList<OSMEdge> getEdgesByBoundary(Map<Long, OSMNode> nodes, String x1, String y1, String x2, String y2) {
+	   ArrayList<OSMEdge> edges = new ArrayList<>();
+	   
+	   try {
+		   Statement stmt = c.createStatement();
+		   String query = "SELECT * FROM nodelist INNER JOIN " +
+				   	"edgelist ON nodelist.nodeid = edgelist.sourcenode WHERE lat BETWEEN " +
+					  x1 + " AND " + x2 + " AND lon BETWEEN " + y1 + " AND " + y2 + ";";
+		   System.out.println(query);
+		   ResultSet rs = stmt.executeQuery(query);
+		   while (rs.next()) {
+			   OSMNode sourceNode = nodes.get(rs.getLong("sourcenode")); 
+			   OSMNode targetNode = nodes.get(rs.getLong("targetnode")); 
 			   if (sourceNode == targetNode || targetNode == null) {
 				  // System.out.println("Loops not allowed and/or node may not be within boundary");
 			   } else {
