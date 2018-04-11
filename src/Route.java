@@ -24,6 +24,16 @@ public class Route {
 		return this.edges;
 	}
 	
+	public void addToRoute(OSMEdge edge) {
+		double weightToAdd = edge.getDistance();
+		this.weight += weightToAdd;
+		this.edges.add(edge);
+	}
+	
+	public void addWeightlessToRoute(OSMEdge edge) {
+		this.edges.add(edge);
+	}
+	
 	public void addToRoute(GraphPath<OSMNode, OSMEdge> path) {
 		List<OSMEdge> list = path.getEdgeList();
 		

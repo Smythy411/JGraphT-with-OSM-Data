@@ -2,10 +2,14 @@
  */
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.jgrapht.*;
+import org.jgrapht.alg.cycle.HierholzerEulerianCycle;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.scoring.Coreness;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
@@ -239,6 +243,8 @@ public class GraphTesting {
 		ArrayList<Route> routes = new ArrayList<Route>();
 		ArrayList<ArrayList<OSMEdge>> deadEnd = new ArrayList<ArrayList<OSMEdge>>();
 		
+		Map<Integer, OSMNode> homeNodeRecord = new HashMap<Integer, OSMNode>();
+		
 		boolean coreness;
 		OSMNode homeNode = new OSMNode();
 		Coreness<OSMNode, OSMEdge> core = new Coreness<OSMNode, OSMEdge>(wayGraph);
@@ -252,7 +258,7 @@ public class GraphTesting {
 		for (int i = 0; i < wayEdges.length; i++) {
 			double weight = paths.getWeight(wayEdges[i].getTargetNode());
 			if (weight > (distance / 4) && weight !=  Double.POSITIVE_INFINITY && weight < distance) {
-				GraphPath<OSMNode, OSMEdge> path = paths.getPath(wayEdges[i].getSourceNode());
+				GraphPath<OSMNode, OSMEdge> path = paths.getPath(wayEdges[i].getTargetNode());
 				
 				Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph<OSMNode, OSMEdge>(wayGraph);
 				List<OSMEdge> list = path.getEdgeList();
@@ -275,6 +281,8 @@ public class GraphTesting {
 						}//wne if else
 					}//end while
 				}//end if
+				
+				homeNodeRecord.put(i, homeNode);
 				
 				ArrayList<OSMEdge> tempDeadEnd = new ArrayList<OSMEdge>();
 				int k = list.size() - 1;
@@ -340,10 +348,43 @@ public class GraphTesting {
 			}//End if else
 		}//End for
     	
-    	System.out.println(routes.get(crIndex).getWeight());
-    	
-		return routes.get(crIndex);
+		Route route = routes.get(crIndex);
+    	System.out.println(route.getWeight());
+    	closeLoop(route, wayGraph);
+
+    	return route;
 	}//End construtDJKRoute()
+	
+	public void closeLoop(Route route, Graph<OSMNode, OSMEdge> wayGraph) {
+    	int size = route.getRoute().size() - 1;
+    
+    	OSMNode endTargetNode = route.getRoute().get(size).getTargetNode();
+    	OSMNode endSourceNode = route.getRoute().get(size).getSourceNode();
+    	
+    	OSMNode startTargetNode = route.getRoute().get(0).getTargetNode();
+    	OSMNode startSourceNode = route.getRoute().get(0).getSourceNode();
+    	if (wayGraph.containsEdge(endSourceNode, startSourceNode)) {
+    		if (route.getRoute().contains(wayGraph.getEdge(endSourceNode, startSourceNode))) {
+    			//System.out.println("source to source");
+    			route.addWeightlessToRoute(wayGraph.getEdge(endSourceNode, startSourceNode));
+    		}
+    	}else if (wayGraph.containsEdge(endSourceNode, startTargetNode)) {
+    		if (route.getRoute().contains(wayGraph.getEdge(endSourceNode, startTargetNode))) {
+    			//System.out.println("source to target");
+    			route.addWeightlessToRoute(wayGraph.getEdge(endSourceNode, startTargetNode));
+    		}
+    	} else if (wayGraph.containsEdge(endTargetNode, startSourceNode)) {
+    		if (route.getRoute().contains(wayGraph.getEdge(endTargetNode, startSourceNode))) {
+    			//System.out.println("target to source")
+    			route.addWeightlessToRoute(wayGraph.getEdge(endTargetNode, startSourceNode));
+    		}
+    	} else if (wayGraph.containsEdge(endTargetNode, startTargetNode)) {
+    		if (route.getRoute().contains(wayGraph.getEdge(endTargetNode, startTargetNode))) {
+    			//System.out.println("target to target");
+    			route.addWeightlessToRoute(wayGraph.getEdge(endTargetNode, startTargetNode));
+    		}
+    	}
+	}
 	
 	public Route constructQuickDJKRoute(Graph<OSMNode, OSMEdge> wayGraph, OSMEdge[] wayEdges, OSMNode closestNode, double distance) {
 		DijkstraShortestPath<OSMNode, OSMEdge> dj = new DijkstraShortestPath<OSMNode, OSMEdge>(wayGraph);
@@ -406,6 +447,7 @@ public class GraphTesting {
 						System.out.println((distance + 0.5) + " -> " + (distance - 0.5) + " : " + currentRouteWeight);
 						if (currentRouteWeight <= (distance + 0.5) && currentRouteWeight >= (distance - 0.5)) {
 							System.out.println(currentRouteWeight);
+					    	closeLoop(route, wayGraph);
 							return route;
 						} else {
 							route.getRoute().clear();

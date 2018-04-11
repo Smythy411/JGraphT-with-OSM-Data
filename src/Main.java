@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.jgrapht.*;
 import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.cycle.HierholzerEulerianCycle;
 import org.jgrapht.alg.interfaces.ShortestPathAlgorithm;
 import org.jgrapht.alg.shortestpath.AllDirectedPaths;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
@@ -83,7 +84,7 @@ public class Main {
 	
 	//Creating a Full Graph using all OSMEdges and corresponding OSMNodes
 	public static void createFullGraph(GraphTesting gt, DBManager db) {
-		ArrayList<OSMNode> nodeList = db.getNodesByBoundary("53.2745", "-6.3553", "53.2897", "-6.3302");
+		ArrayList<OSMNode> nodeList = db.getNodesByBoundary("53.25916764870588", "-6.164960861206055", "53.28072652817066", "-6.141786575317383");
 		System.out.println(nodeList.size());
 		Map<Long, OSMNode> nodeMap = new HashMap<Long, OSMNode>();
 		for (int i = 0; i < nodeList.size(); i++) {
@@ -91,14 +92,14 @@ public class Main {
 			nodeMap.put(node.getNodeID(), node);
 		}
 		
-		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeMap, "53.2745", "-6.3553", "53.2897", "-6.3302");
+		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeMap, "53.25916764870588", "-6.164960861206055", "53.28072652817066", "-6.141786575317383");
 		System.out.println(edges.size());
 		
-		ArrayList<OSMWay> ways = db.getWaysByBoundary(nodeList, edges, "53.2745", "-6.3553", "53.2897", "-6.3302");
+		ArrayList<OSMWay> ways = db.getWaysByBoundary(nodeList, edges, "53.25916764870588", "-6.164960861206055", "53.28072652817066", "-6.141786575317383");
 		System.out.println(ways.size());
 		
-		double sourceLat = 53.279;
-		double sourceLon = -6.346;
+		double sourceLat = 53.26992034;
+		double sourceLon = -6.15333986;
 		
 		OSMNode closestNode = new OSMNode();
 		double closestDistance = 0.5;
@@ -139,7 +140,7 @@ public class Main {
 		
 		  //Graph Traversal + Map Viewing
 		OSMEdge[] wayEdgeSet = wayGraph.edgeSet().toArray(new OSMEdge[wayGraph.edgeSet().size()]);
-		Route DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 5.0);
+		Route DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 6.0);
     	//ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(2000, closestNode, wayGraph);
 		System.out.println(DJKRoute.getRoute().size());
     	MapViewer mv = new MapViewer(DJKRoute.getRoute());

@@ -99,6 +99,11 @@ public class OSMEdge extends DefaultEdge{
 		this.targetNode = target;
 	}//End setTargetNode()
 	
+	public OSMNode[] getBothNodes() {
+		OSMNode[]  nodes = {this.sourceNode, this.targetNode};
+		return nodes; 
+	}
+	
 	public OSMNode getNeighbour(OSMNode v) {
 		if (v == this.sourceNode ) {
 			return this.targetNode; 
