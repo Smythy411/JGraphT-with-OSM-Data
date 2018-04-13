@@ -24,6 +24,10 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
 import org.jxmapviewer.viewer.Waypoint;
 import org.jxmapviewer.viewer.WaypointPainter;
 
+/*
+ * This class was used for visually testing the routing algorithms.
+ * Its a simple Java swing that loads OSM map tiles
+ */
 public class MapViewer {
 	
 	JXMapViewer mapViewer = new JXMapViewer();

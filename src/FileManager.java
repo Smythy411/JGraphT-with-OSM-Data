@@ -145,7 +145,7 @@ public class FileManager {
     			nodeString = nodeString + nodeIDs.get(i) + "}";
     		} else {
     			nodeString = nodeString + nodeIDs.get(i) + ", ";
-    		}
+    		}//end if else
     	}//End for
     	db.insert("ways", new String[] {wayID, nodeString, highway, name, landuse});
     	return j;

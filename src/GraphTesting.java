@@ -86,6 +86,7 @@ public class GraphTesting {
 	
 	/*
 	 * Random Walk Approach
+	 * Testing the Random walk iterator from JGraphT
 	 */
 	
 	
@@ -121,7 +122,7 @@ public class GraphTesting {
 	 * Depth First Approach
 	 */
 	
-	public ArrayList<OSMEdge> constructPincerGraph(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph) {
+	public ArrayList<OSMEdge> constructDFSandDJKRoute(int size, OSMNode source, Graph<OSMNode, OSMEdge> graph) {
 		ArrayList<OSMEdge> edges = new ArrayList<>();
 		MapViewer mv = new MapViewer(source);
 		ArrayList<OSMNode> constructedGraph = new ArrayList<>();
@@ -190,7 +191,7 @@ public class GraphTesting {
     	
 		System.out.println("Full Distance: " + this.distance);
 		return edges;
-	}//End constructPincerGraph
+	}//End constructDFSandDJKRoute()
 	
 	public boolean isPath(Graph<OSMNode, OSMEdge> graph, ArrayList<OSMEdge> edges, OSMNode source) {
 		Graph<OSMNode, OSMEdge> tempGraph = new AsSubgraph(graph);
@@ -235,6 +236,10 @@ public class GraphTesting {
 		
 		return edges;
 	}//End constructWalk
+	
+	/*
+	 * Optimal DJK Approach
+	 */
 	
 	public Route constructDJKRoute(Graph<OSMNode, OSMEdge> wayGraph, OSMEdge[] wayEdges, OSMNode closestNode, double distance) {
 		DijkstraShortestPath<OSMNode, OSMEdge> dj = new DijkstraShortestPath<OSMNode, OSMEdge>(wayGraph);
@@ -469,6 +474,10 @@ public class GraphTesting {
     	
 		return null;
 	}//End construtDJKRoute()
+	
+	/*
+	 * Attempting a recursive approach for traversing the graph
+	 */
 	
 	public ArrayList<OSMEdge> constructSubGraph(boolean finished, int size, OSMNode source, OSMNode target, ArrayList<OSMEdge> full) {
 		if (finished) {

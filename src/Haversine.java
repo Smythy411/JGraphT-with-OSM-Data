@@ -1,4 +1,9 @@
 
+/*
+Class for calculating the haversine distance
+As this is a well documented and implemented function I saw no need in writing it myself
+Source can be found at https://github.com/jasonwinn/haversine
+ */
 /**
  * Jason Winn
  * http://jasonwinn.org

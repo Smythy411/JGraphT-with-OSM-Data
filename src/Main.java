@@ -30,7 +30,6 @@ public class Main {
 	public static void main(String[] args) {
 		
 		//SetUP
-		
 		//databaseSetUp();
 		//dataSetUp();
         
@@ -90,7 +89,7 @@ public class Main {
 		for (int i = 0; i < nodeList.size(); i++) {
 			OSMNode node = nodeList.get(i);
 			nodeMap.put(node.getNodeID(), node);
-		}
+		}//end for
 		
 		ArrayList<OSMEdge> edges = db.getEdgesByBoundary(nodeMap, "53.2745", "-6.3553", "53.2897", "-6.3302");
 		System.out.println(edges.size());
@@ -106,6 +105,7 @@ public class Main {
 		
 		ArrayList<OSMEdge> wayEdges = new ArrayList<>();
 		System.out.println("Finding Closest Node");
+		
 		ArrayList<String> highwaysToIgnore = new ArrayList<String>();
 		highwaysToIgnore.add("null");
 		highwaysToIgnore.add("service");
@@ -148,12 +148,11 @@ public class Main {
 		
 		  //Graph Traversal + Map Viewing
 		OSMEdge[] wayEdgeSet = wayGraph.edgeSet().toArray(new OSMEdge[wayGraph.edgeSet().size()]);
-		Route DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 3.0);
-    	//ArrayList<OSMEdge> pincerGraph = gt.constructPincerGraph(2000, closestNode, wayGraph);
-		System.out.println(DJKRoute.getRoute().size());
-    	MapViewer mv = new MapViewer(DJKRoute.getRoute());
+		//Route DJKRoute = gt.constructDJKRoute(wayGraph, wayEdgeSet, closestNode, 3.0);
+    	ArrayList<OSMEdge> dfsRoute = gt.constructDFSandDJKRoute(2000, closestNode, wayGraph);
+		//System.out.println(DJKRoute.getRoute().size());
+    	//MapViewer mv = new MapViewer(DJKRoute.getRoute());
     	
-    	//2.35 // 16.04
 		/*	Testing
 		Graph<OSMNode, OSMEdge> edgeGraph = gt.createEdgeGraph(edges);
 	    OSMEdge[] edgeSet = edgeGraph.edgeSet().toArray(new OSMEdge[edgeGraph.edgeSet().size()]);
